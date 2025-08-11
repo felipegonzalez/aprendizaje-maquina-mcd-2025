@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.DS_Store
+.cache/
+.config/
+.local/
+.sh_history
+test-keras.R
+
