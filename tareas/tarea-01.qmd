@@ -1,0 +1,185 @@
+---
+title: "Tarea 1: error de predicción y complejidad"
+format: html
+---
+
+Veremos más del ejemplo que empezamos a ver en clase (sección 2.1). Usamos
+datos simulados como en las notas. Puedes hacer variaciones si te interesa:
+
+```{r, message = FALSE}
+library(tidyverse)
+library(tidymodels)
+genera_datos <- function(n = 500, tipo = NULL){
+  dat_tbl <- tibble(nse = runif(n, 0, 100)) |>
+    mutate(estudio_años = floor(rnorm(n, 1.5 * sqrt(nse), 1))) |>
+    mutate(estudio_años = pmax(0, pmin(17, estudio_años))) |> 
+    mutate(habilidad = rnorm(n, 100 + 0.1 * nse, 1)) |> 
+    mutate(z = 100 + (habilidad/100) * ( 20 * nse + 5 * (estudio_años))) |> 
+    mutate(ingreso = pmax(0, 0.2*(z + rnorm(n, 0, 150))))
+  obs_tbl <- dat_tbl |> 
+    mutate(tipo = tipo, id = 1:n)
+  obs_tbl |> select(id, tipo, x = estudio_años, y = ingreso)
+}
+# Tomamos una muestra muy grande (teórico) para tener casi el predictor óptimo
+poblacion_tbl <- genera_datos(n = 50000, tipo = "poblacion")
+# calcular óptimo
+preds_graf_tbl <- poblacion_tbl |> 
+  group_by(x) |> # condicionar a x
+  summarise(.pred = mean(y)) |> # media en cada grupo
+  mutate(predictor = "_óptimo")
+```
+
+
+Veremos dos métodos simples para construir predictores con una muestra
+de entrenamiento:
+
+- k-vecinos más cercanos, que para cada $x$ donde que queremos predecir
+  $y$ toma los $k$ puntos más cercanos y promedia sus $y$ (ver sección 2.3).
+- Regresión lineal.
+
+
+## Vecinos más cercanos
+
+Obtenemos una muestra de entrenamiento:
+
+```{r}
+set.seed(5)
+entrena_tbl <- genera_datos(n = 20, tipo = "entrena")
+```
+
+Construimos un flujo que vamos a ajustar con los datos de entrenamiento. El 
+flujo incluye un algoritmo (vecinos más cercanos), junto con 
+pasos de preprocesamiento de los datos
+
+```{r}
+# modelo
+modelo_kvecinos <- nearest_neighbor(
+    neighbors = 2, 
+    weight_func = "gaussian") |> 
+  set_mode("regression") |> 
+  set_engine("kknn")
+# preprocesamiento: escogemos variables y estandarizamos predictor
+# esto no es necesario en este caso, pero lo ponemos porque
+# tipícamente el preproceso no es trivial.
+receta <- recipe(y ~ x, data = entrena_tbl |> select(x, y)) |> 
+  step_normalize(all_predictors())
+# construimos el flujo con la receta y el algoritmo:
+flujo <- workflow() |> 
+  add_recipe(receta) |> 
+  add_model(modelo_kvecinos)
+```
+
+Finalmente, ajustamos el flujo a los datos de entrenamiento:
+
+```{r}
+# Ajustamos flujo
+flujo_ajustado_vecinos <- fit(flujo, entrena_tbl)
+```
+
+**Pregunta 1**: Explica por qué ajustamos tanto preprocesamiento como modelo
+en el flujo. ¿Qué se calcula en la normalización del predictor? 
+
+
+## Evaluación del predictor
+
+Primero graficamos el predictor que construimos para ver cómo son sus predicciones:
+
+```{r, fig.width=5, fig.height=3}
+años_x <- tibble(x = seq(0, 17, by = 0.5))
+
+## Evaluamos el predictor en valores fijos de x:
+preds_vmc <- predict(flujo_ajustado_vecinos, años_x) |> 
+  bind_cols(años_x) |> mutate(predictor = "vecinos")
+# Graficamos el predictor junto con los datos de entrenamiento
+g_1 <- ggplot(entrena_tbl, aes(x = x)) +
+  geom_line(data = preds_vmc, 
+            aes(y = .pred, colour = predictor), linewidth = 1.1) +
+  geom_point(aes(y = y), colour = "red") +
+  labs(subtitle = "Óptimo vs ajustado")
+g_1
+```
+
+**Pregunta 2**: 1) Explica qué tipo de comportamientos indeseables tiene este
+predictor. Puedes repetir el análisis con otras muestras de entrenamiento para
+confirmar que tus conclusiones aplican a distintas muestras. 2) En aprendizaje
+supervisado, ¿cómo sabes qué es un comportamientos indeseable?
+
+**Pregunta 3**: ¿Crees que si calculamos el error con la muestra de entrenamiento
+esto refleje bien el desempeño predictivo de este predictor? ¿Por qué?
+
+## Regresión lineal
+
+Ahora repetimos con regresión lineal. Utilizamos la misma receta de 
+preprocesamiento, pero cambiamos a un modelo lineal:
+
+```{r}
+modelo_lineal <- linear_reg() |> 
+  set_mode("regression") |> 
+  set_engine("lm")
+flujo_lineal <- workflow() |> 
+  add_recipe(receta) |> 
+  add_model(modelo_lineal)
+# Ajustamos
+flujo_ajustado_lineal <- fit(flujo_lineal, entrena_tbl)
+```
+
+Las grafica del predicto se ve como sigue:
+
+```{r, fig.width=5, fig.height=3}
+años_x <- tibble(x = seq(0, 17, by = 0.5))
+
+## Evaluamos el predictor en valores fijos de x:
+#### no es necesario estandarizar pues aplicamos todo el flujo ajustado:
+preds_lineal <- predict(flujo_ajustado_lineal, años_x) |> 
+  bind_cols(años_x) |> mutate(predictor = "vecinos")
+# Graficamos el predictor junto con los datos de entrenamiento
+g_1 <- ggplot(entrena_tbl, aes(x = x)) +
+  geom_line(data = preds_lineal, 
+            aes(y = .pred, colour = predictor), linewidth = 1.1) +
+  geom_point(aes(y = y), colour = "red") +
+  labs(subtitle = "Óptimo vs ajustado")
+g_1
+```
+**Pregunta 4**: 1) Explica qué tipo de comportamientos indeseables tiene este
+predictor. Puedes repetir el análisis con otras muestras de entrenamiento para
+confirmar que tus conclusiones aplican a distintas muestras. 
+
+**Pregunta 5**: ¿Crees que si calculamos el error con la muestra de entrenamiento
+esto refleje bien el desempeño predictivo de este predictor? ¿Por qué?
+
+## Evaluando el poder predictivo
+
+Finalmente, verificamos las observaciones que hicimos arriba. Para esto,
+consideramos una muestra de prueba grande, de forma que la evaluación sea
+precisa.
+
+```{r}
+prueba_tbl <- genera_datos(n = 2000, tipo = "prueba")
+```
+
+La evaluación para vecinoos más cercanos es:
+
+```{r}
+eval_tbl <- predict(flujo_ajustado_vecinos, prueba_tbl) |> 
+  bind_cols(prueba_tbl) 
+resumen_tbl <- eval_tbl |>  
+  rmse(truth = y, estimate = .pred) 
+resumen_tbl
+```
+
+
+Y para regresión lineal:
+
+```{r}
+eval_tbl <- predict(flujo_ajustado_lineal, prueba_tbl) |> 
+  bind_cols(prueba_tbl) 
+resumen_tbl <- eval_tbl |>  
+  rmse(truth = y, estimate = .pred) 
+resumen_tbl
+```
+
+**Pregunta 6**: Ambos predictores tienen considerablemente más error en la muestra de prueba que el predictor óptimo (ver notas). Considerando tus observaciones de arriba,
+describe que tipo de errores tiene cada método (sugerencia: tiene que ver con los
+conceptos de "subajuste" y "sobreajuste").
+
+
