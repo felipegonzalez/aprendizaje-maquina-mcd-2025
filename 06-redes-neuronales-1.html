@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>6&nbsp; Redes neuronales (intro) – Aprendizaje Máquina 2025</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./99-referencias.html" rel="next">
+<link href="./05-regularizacion-1.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-ba0b23e5490d46226c61343faa43cbde.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./06-redes-neuronales-1.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Redes neuronales (intro)</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Aprendizaje Máquina 2025</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Temario y referencias</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-principios-supervisado.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Principios de aprendizaje supervisado</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-metodos-locales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Estructura en modelos y métodos locales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-lineales-ingenieria.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Métodos lineales e ingenería de entradas</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-regularizacion-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Regularización y variabilidad</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-redes-neuronales-1.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Redes neuronales (intro)</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./99-referencias.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#introducción-a-redes-neuronales" id="toc-introducción-a-redes-neuronales" class="nav-link active" data-scroll-target="#introducción-a-redes-neuronales"><span class="header-section-number">6.1</span> Introducción a redes neuronales</a>
+  <ul class="collapse">
+  <li><a href="#la-función-logística" id="toc-la-función-logística" class="nav-link" data-scroll-target="#la-función-logística">La función logística</a></li>
+  <li><a href="#cómo-construyen-entradas-las-redes-neuronales" id="toc-cómo-construyen-entradas-las-redes-neuronales" class="nav-link" data-scroll-target="#cómo-construyen-entradas-las-redes-neuronales">¿Cómo construyen entradas las redes neuronales?</a></li>
+  <li><a href="#cómo-ajustar-los-parámetros" id="toc-cómo-ajustar-los-parámetros" class="nav-link" data-scroll-target="#cómo-ajustar-los-parámetros">¿Cómo ajustar los parámetros?</a></li>
+  </ul></li>
+  <li><a href="#interacciones-en-redes-neuronales" id="toc-interacciones-en-redes-neuronales" class="nav-link" data-scroll-target="#interacciones-en-redes-neuronales"><span class="header-section-number">6.2</span> Interacciones en redes neuronales</a></li>
+  <li><a href="#cálculo-en-redes-feed-forward" id="toc-cálculo-en-redes-feed-forward" class="nav-link" data-scroll-target="#cálculo-en-redes-feed-forward"><span class="header-section-number">6.3</span> Cálculo en redes: feed-forward</a></li>
+  <li><a href="#notación" id="toc-notación" class="nav-link" data-scroll-target="#notación"><span class="header-section-number">6.4</span> Notación</a></li>
+  <li><a href="#algoritmo-de-feed-forward" id="toc-algoritmo-de-feed-forward" class="nav-link" data-scroll-target="#algoritmo-de-feed-forward"><span class="header-section-number">6.5</span> Algoritmo de Feed forward</a></li>
+  <li><a href="#algoritmo-de-backpropagation-cálculo-del-gradiente-regresión" id="toc-algoritmo-de-backpropagation-cálculo-del-gradiente-regresión" class="nav-link" data-scroll-target="#algoritmo-de-backpropagation-cálculo-del-gradiente-regresión"><span class="header-section-number">6.6</span> Algoritmo de Backpropagation: cálculo del gradiente (regresión)</a>
+  <ul class="collapse">
+  <li><a href="#cálculo-para-un-caso-de-entrenamiento" id="toc-cálculo-para-un-caso-de-entrenamiento" class="nav-link" data-scroll-target="#cálculo-para-un-caso-de-entrenamiento">Cálculo para un caso de entrenamiento</a></li>
+  <li><a href="#algoritmo-de-backpropagation" id="toc-algoritmo-de-backpropagation" class="nav-link" data-scroll-target="#algoritmo-de-backpropagation">Algoritmo de backpropagation</a></li>
+  </ul></li>
+  <li><a href="#ajuste-de-parámetros-introducción" id="toc-ajuste-de-parámetros-introducción" class="nav-link" data-scroll-target="#ajuste-de-parámetros-introducción"><span class="header-section-number">6.7</span> Ajuste de parámetros (introducción)</a>
+  <ul class="collapse">
+  <li><a href="#ejemplo-regresión" id="toc-ejemplo-regresión" class="nav-link" data-scroll-target="#ejemplo-regresión">Ejemplo (regresión)</a></li>
+  <li><a href="#resumen" id="toc-resumen" class="nav-link" data-scroll-target="#resumen">Resumen</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Redes neuronales (intro)</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introducción-a-redes-neuronales" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="introducción-a-redes-neuronales"><span class="header-section-number">6.1</span> Introducción a redes neuronales</h2>
+<p>En partes anteriores, vimos cómo hacer más flexibles los métodos de regresión: la idea es construir entradas derivadas a partir de las variables originales, e incluirlas en el modelo de regresión. Este enfoque es bueno cuando tenemos relativamente pocas variables originales de entrada, y tenemos una idea de qué variables derivadas es buena idea incluir (por ejemplo, splines para una variable como edad, interacciones para variables importantes, etc). Sin embargo, si hay una gran cantidad de entradas, esta técnica puede ser prohibitiva en términos de cálculo y trabajo manual.</p>
+<p>Por ejemplo, si tenemos unas 100 entradas numéricas, al crear todas las interacciones <span class="math inline">\(x_i x_j\)</span> y los cuadrados <span class="math inline">\(x_i^2\)</span> terminamos con unas 5150 variables. Para el problema de dígitos (256 entradas o pixeles) terminaríamos con unas 32 mil entradas adicionales. Aún cuando es posible regularizar, en estos casos suena más conveniente construir entradas derivadas a partir de los datos.</p>
+<p>Para hacer esto, consideramos entradas <span class="math inline">\(X_1, . . . , X_p\)</span>, y supongamos que tenemos un problema regresión donde queremos predecir <span class="math inline">\(Y\)</span>. Aunque hay muchas maneras de construir entradas derivadas, una manera simple sería construir <span class="math inline">\(m\)</span> nuevas entradas mediante:</p>
+<p><span class="math display">\[a_k = h \left ( \theta_{k,0} + \sum_{j=1}^p \theta_{k,j}x_j
+\right)\]</span></p>
+<p>para <span class="math inline">\(k=1,\ldots, m\)</span>, donde <span class="math inline">\(h\)</span> es una función no lineal (logística o relu entre otras), y las <span class="math inline">\(\theta\)</span> son parámetros que seleccionaremos más tarde. La idea es hacer <strong>combinaciones lineales</strong> de variables <strong>transformadas</strong>.</p>
+<p>Modelamos ahora la respuesta usando las entradas derivadas en lugar de las originales en una regresión lineal:</p>
+<p><span class="math inline">\(a_1, . . . , a_m\)</span>: <span class="math display">\[f(x) =  \beta_0 + \sum_{j=1}^m \beta_ja_j\]</span></p>
+<p>Podemos representar este esquema con una red dirigida (<span class="math inline">\(m=3\)</span> variables derivadas):</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="400"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="la-función-logística" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="la-función-logística">La función logística</h3>
+<p>Una de las transformaciones <span class="math inline">\(h\)</span> más comunes para construir entradas derivadas es la función logística:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Nota
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La función logística está dada por <span class="math display">\[h(x)=\frac{e^x}{1+e^x}\]</span></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="cf">function</span>(x){<span class="fu">exp</span>(x)<span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(x)) }</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">tibble</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">6</span>, <span class="fl">0.01</span>)), <span class="fu">aes</span>(<span class="at">x =</span> x)) <span class="sc">+</span> <span class="fu">stat_function</span>(<span class="at">fun =</span> h)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Observaciones:</strong></p>
+<ul>
+<li>¿Por qué usar <span class="math inline">\(h\)</span> para las entradas derivadas <span class="math inline">\(a_k\)</span>? En primer lugar, nótese que si no transformamos con alguna función no lineal <span class="math inline">\(h\)</span>, el modelo final <span class="math inline">\(p_1\)</span> para la probabilidad condicional es el mismo que el de regresión logística (combinaciones lineales de combinaciones lineales son combinaciones lineales). Sin embargo, al transformar con <span class="math inline">\(h\)</span>, las <span class="math inline">\(x_j\)</span> contribuyen de manera no lineal a las entradas derivadas.</li>
+<li>Las variables <span class="math inline">\(a_k\)</span> que se pueden obtener son similares (para una variable de entrada) a los splines que vimos en la parte anterior.</li>
+<li>Es posible demostrar que si se crean suficientes entradas derivadas (<span class="math inline">\(m\)</span> es suficientemente grande), entonces la función <span class="math inline">\(f(x)\)</span> puede aproximar cualquier función continua. La función <span class="math inline">\(h\)</span> (que se llama <strong>función de activación</strong> no es especial: funciones continuas con forma similar a la sigmoide (logística) pueden usarse también (por ejemplo, arcotangente, o lineal rectificada). La idea es que cualquier función se puede aproximar mediante superposición de funciones tipo sigmoide (ver por ejemplo Cybenko 1989, Approximation by Superpositions of a Sigmoidal Function).</li>
+</ul>
+</section>
+<section id="cómo-construyen-entradas-las-redes-neuronales" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="cómo-construyen-entradas-las-redes-neuronales">¿Cómo construyen entradas las redes neuronales?</h3>
+<p>Comencemos por un ejemplo simple de clasificación binaria con una sola entrada <span class="math inline">\(x\)</span>. Supondremos que el modelo verdadero está dado por:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>x)) <span class="co"># es lo mismo que exp(x)/(1 + exp(x))</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>, <span class="fl">0.1</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">atan</span>(<span class="dv">2</span> <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> x<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2805721</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>x_1 <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">10</span>, <span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">10</span>, <span class="fu">atan</span>(<span class="dv">2</span> <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> x_1<span class="sc">^</span><span class="dv">2</span>), <span class="fl">0.2</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">tibble</span>(x_1, y)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>dat_f <span class="ot">&lt;-</span> <span class="fu">tibble</span>(x, f)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(dat_f) <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(x, f))</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>g</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">data =</span> datos, <span class="fu">aes</span>(<span class="at">x =</span> x_1, <span class="at">y =</span> y), <span class="at">colour =</span> <span class="st">'red'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>donde adicionalmente graficamos 30 datos simulados. Recordamos que queremos ajustar la curva roja, que da la probabilidad condicional de clase. Podríamos ajustar un modelo de regresión logística expandiendo manualmente el espacio de entradas agregando <span class="math inline">\(x^2\)</span>, y obtendríamos un ajuste razonable. Pero la idea aquí es que podemos crear entradas derivadas de forma automática.</p>
+<p>Supongamos entonces que pensamos crear dos entradas <span class="math inline">\(a_1\)</span> y <span class="math inline">\(a_2\)</span>, funciones de <span class="math inline">\(x_1\)</span>, y luego predecir <span class="math inline">\(g.1\)</span>, la clase, en función de estas dos entradas. Por ejemplo, podríamos tomar:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="400"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>donde hacemos una regresión para predecir <span class="math inline">\(y\)</span> mediante <span class="math display">\[f(a) = \beta_0 + \beta_1a_1+\beta_2 a_2,\]</span> <span class="math inline">\(a_1\)</span> y <span class="math inline">\(a_2\)</span> están dadas por <span class="math display">\[a_1(x)=h(\beta_{1,0} + \beta_{1,1} x_1),\]</span> <span class="math display">\[a_2(x)=h(\beta_{2,0} + \beta_{2,1} x_1).\]</span></p>
+<p>Por ejemplo, podríamos tomar</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>a_1 <span class="ot">&lt;-</span> <span class="fu">h</span>( <span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> x)  <span class="co"># 2(x+1/2)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>a_2 <span class="ot">&lt;-</span> <span class="fu">h</span>(<span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> x)  <span class="co"># 2(x-1/2) # una es una versión desplazada de otra.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Las funciones <span class="math inline">\(a_1\)</span> y <span class="math inline">\(a_2\)</span> dependen de <span class="math inline">\(x\)</span> de la siguiente forma:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dat_a <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> x, <span class="at">a_1 =</span> a_1, <span class="at">a_2 =</span> a_2)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>dat_a_2 <span class="ot">&lt;-</span> dat_a <span class="sc">|&gt;</span> <span class="fu">gather</span>(variable, valor, a_1<span class="sc">:</span>a_2)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dat_a_2, <span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y=</span>valor, <span class="at">colour=</span>variable, <span class="at">group=</span>variable)) <span class="sc">+</span> <span class="fu">geom_line</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Si las escalamos y sumamos, obtenemos</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dat_a <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x=</span>x, <span class="at">a_1 =</span> a_1, <span class="at">a_2 =</span>  a_2, </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">suma =</span> <span class="sc">-</span><span class="fl">1.5</span> <span class="sc">+</span>  <span class="dv">6</span> <span class="sc">*</span> a_1 <span class="sc">-</span>  <span class="dv">6</span> <span class="sc">*</span> a_2)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>dat_a_2 <span class="ot">&lt;-</span> dat_a <span class="sc">|&gt;</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(a_1<span class="sc">:</span>suma, <span class="at">names_to =</span> <span class="st">"variable"</span>, <span class="at">values_to =</span> <span class="st">"valor"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dat_a_2, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> valor, <span class="at">colour =</span> variable, <span class="at">group =</span> variable)) <span class="sc">+</span> <span class="fu">geom_line</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>y finalmente obtenemos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dat_2 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(x, <span class="at">f =</span> (<span class="sc">-</span><span class="fl">1.5</span> <span class="sc">+</span> <span class="dv">6</span> <span class="sc">*</span> a_1 <span class="sc">-</span> <span class="dv">6</span> <span class="sc">*</span> a_2))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dat_2, <span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y =</span> f)) <span class="sc">+</span> <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_line</span>(<span class="at">data=</span>dat_f, <span class="fu">aes</span>(<span class="at">x=</span>x,<span class="at">y=</span>f), <span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_point</span>(<span class="at">data =</span> datos, <span class="fu">aes</span>(<span class="at">x =</span> x_1, <span class="at">y =</span> y))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>que da un ajuste razonable. Este es un ejemplo de cómo la mezcla de dos funciones logísticas puede replicar esta función con forma de chipote. Otras funciones más complejas se pueden obtener incluyendo más <span class="math inline">\(a_j\)</span>’s que son versiones escaladas y desplazadas de la función logística. El mecanismo para combinar estas <span class="math inline">\(a_j\)</span>’s es similar al de los splines que vimos en la sección anterior.</p>
+</section>
+<section id="cómo-ajustar-los-parámetros" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="cómo-ajustar-los-parámetros">¿Cómo ajustar los parámetros?</h3>
+<p>Para encontrar los mejores parámetros, minimizamos la devianza sobre los parámetros <span class="math inline">\(\beta_0,\beta_1,\beta_2\)</span> y <span class="math inline">\(\beta_{1,0},\beta_{1,1},\beta_{2,0},\beta_{2,1}\)</span>.</p>
+<p>Veremos más adelante que conviene hacer esto usando descenso o en gradiente o descenso en gradiente estocástico, pero por el momento usamos la función <em>optim</em> de R para minimizar la devianza. En primer lugar, creamos una función que para todas las entradas calcula los valores de salida. En esta función hacemos <strong>feed-forward</strong> de las entradas a través de la red para calcular la salida.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">## esta función calcula los valores de cada nodo en toda la red,</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="do">## para cada entrada</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>feed_fow <span class="ot">&lt;-</span> <span class="cf">function</span>(beta, x){</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  a_1 <span class="ot">&lt;-</span> <span class="fu">h</span>(beta[<span class="dv">1</span>] <span class="sc">+</span> beta[<span class="dv">2</span>] <span class="sc">*</span> x) <span class="co"># calcula variable 1 de capa oculta</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  a_2 <span class="ot">&lt;-</span> <span class="fu">h</span>(beta[<span class="dv">3</span>] <span class="sc">+</span> beta[<span class="dv">4</span>] <span class="sc">*</span> x) <span class="co"># calcula variable 2 de capa oculta</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  f <span class="ot">&lt;-</span> (beta[<span class="dv">5</span>] <span class="sc">+</span> beta[<span class="dv">6</span>] <span class="sc">*</span> a_1 <span class="sc">+</span> beta[<span class="dv">7</span>] <span class="sc">*</span> a_2) <span class="co"># calcula capa de salida</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  f</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Nótese que simplemente seguimos el diagrama mostrado arriba para hacer los cálculos, combinando linealmente las entradas en cada capa.</p>
+<p>Ahora definimos una función para calcular la devianza. Conviene crear una función que crea funciones, para obtener una función que <em>sólo se evalúa en los parámetros</em> para cada conjunto de datos de entrenamiento fijos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>perdida_cuad_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y){</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># esta función es una fábrica de funciones</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>   perdida_cuad <span class="ot">&lt;-</span> <span class="cf">function</span>(beta){</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>      f <span class="ot">&lt;-</span> <span class="fu">feed_fow</span>(beta, x)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mean</span>((y <span class="sc">-</span> f)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>   }</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  perdida_cuad</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Por ejemplo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>perdida_cuad <span class="ot">&lt;-</span> <span class="fu">perdida_cuad_fun</span>(x_1, y) <span class="co"># crea función</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="do">## ahora dev toma solamente los 7 parámetros beta:</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">perdida_cuad</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.034101</code></pre>
+</div>
+</div>
+<p>Finalmente, intentamos resolver el problema de minimización de la pérdida cuadrática de los datos de entrenamiento. Para esto usaremos la función <em>optim</em> de R:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">5</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>salida <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="fu">rnorm</span>(<span class="dv">7</span>), perdida_cuad, <span class="at">method =</span> <span class="st">'BFGS'</span>) <span class="co"># inicializar al azar punto inicial</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>beta <span class="ot">&lt;-</span> salida<span class="sc">$</span>par</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>beta</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -9.097577  5.315080 -6.973249 -6.762489  1.093208 -3.309966 -2.488820</code></pre>
+</div>
+</div>
+<p>Y ahora podemos graficar con el vector <span class="math inline">\(\beta\)</span> encontrado:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">## hacer feed forward con beta encontrados</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>p_2 <span class="ot">&lt;-</span> <span class="fu">feed_fow</span>(beta, x)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>dat_2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x, <span class="at">p_2 =</span> p_2)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dat_2, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> p_2)) <span class="sc">+</span> <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_line</span>(<span class="at">data =</span> dat_f, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> f), <span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_point</span>(<span class="at">data =</span> datos, <span class="fu">aes</span>(<span class="at">x =</span> x_1, <span class="at">y =</span> y))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Los coeficientes estimados, que en este caso muchas veces se llaman <em>pesos</em>, son:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>beta <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -9.10  5.32 -6.97 -6.76  1.09 -3.31 -2.49</code></pre>
+</div>
+</div>
+<p>que parecen ser muy grandes. Igualmente, de la figura vemos que el ajuste no parece ser muy estable (esto se puede confirmar corriendo con distintos conjuntos de entrenamiento). Podemos entonces regularizar ligeramente la devianza para resolver este problema. En primer lugar, definimos la devianza regularizada (ridge), donde penalizamos todos los coeficientes que multiplican a una variable, pero no los intercepts:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>perdida_cuad_fun_r <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y, lambda){</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># esta función es una fábrica de funciones</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>   perdida_reg <span class="ot">&lt;-</span> <span class="cf">function</span>(beta){</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>         f <span class="ot">&lt;-</span> <span class="fu">feed_fow</span>(beta, x)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>         <span class="co"># en esta regularizacion quitamos sesgos, pero puede hacerse también con sesgos.</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>         <span class="fu">mean</span>((y <span class="sc">-</span> f)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> lambda <span class="sc">*</span> <span class="fu">sum</span>(beta[<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">6</span><span class="sc">:</span><span class="dv">7</span>)]<span class="sc">^</span><span class="dv">2</span>) </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>   }</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  perdida_reg</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>perdida_r <span class="ot">&lt;-</span> <span class="fu">perdida_cuad_fun_r</span>(x_1, y, <span class="fl">0.001</span>) <span class="co"># crea función dev</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">5</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>salida <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="fu">rnorm</span>(<span class="dv">7</span>, <span class="dv">0</span>, <span class="dv">1</span>), perdida_r, <span class="at">method =</span> <span class="st">'BFGS'</span>) <span class="co"># inicializar al azar punto inicial</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>beta <span class="ot">&lt;-</span> salida<span class="sc">$</span>par</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">perdida_cuad</span>(beta) <span class="sc">/</span> <span class="fu">nrow</span>(datos)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.001831033</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>f_2 <span class="ot">&lt;-</span> <span class="fu">feed_fow</span>(beta, x)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>dat_2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x, <span class="at">f_2 =</span> f_2)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>beta</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -2.072798  2.136928 -4.317303 -4.221802  1.458438 -3.053558 -2.952405</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dat_2, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> f_2)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_line</span>(<span class="at">data =</span> dat_f, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> f), <span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_point</span>(<span class="at">data =</span> datos, <span class="fu">aes</span>(<span class="at">x =</span> x_1, <span class="at">y =</span> y))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>y obtenemos un ajuste más estable. Podemos usar también keras. El modelo, con una capa intermedia de dos unidades, y regularización ridge para los coeficientes, y optimización por descenso en gradiente se define como:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(keras3)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># para reproducibilidad:</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span><span class="fu">set_random_seed</span>(<span class="dv">13</span>) </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># construir modelo</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>ejemplo_mod <span class="ot">&lt;-</span> <span class="fu">keras_model_sequential</span>()</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>ejemplo_mod <span class="sc">|&gt;</span> </span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">layer_dense</span>(<span class="at">units =</span> <span class="dv">2</span>, </span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">activation =</span> <span class="st">"sigmoid"</span>, <span class="at">kernel_regularizer =</span> <span class="fu">regularizer_l2</span>(<span class="fl">0.001</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_dense</span>(<span class="at">units =</span> <span class="dv">1</span>, </span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">activation =</span> <span class="st">"linear"</span>, <span class="at">kernel_regularizer =</span> <span class="fu">regularizer_l2</span>(<span class="fl">0.001</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>x_mat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(datos<span class="sc">$</span>x_1, <span class="at">ncol =</span> <span class="dv">1</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> datos<span class="sc">$</span>y</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># usamos devianza como medida de error y descenso en gradiente:</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>ejemplo_mod <span class="sc">|&gt;</span> <span class="fu">compile</span>(<span class="at">loss =</span> <span class="st">"mse"</span>, </span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">optimizer =</span> <span class="fu">optimizer_sgd</span>(<span class="at">learning_rate =</span> <span class="fl">0.2</span>),</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="st">"mse"</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># nota: esta learning rate (lr) es demasiado alta para problemas típicos</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>historia <span class="ot">&lt;-</span> ejemplo_mod <span class="sc">|&gt;</span> </span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(x_mat, y, </span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">batch_size =</span> <span class="fu">nrow</span>(x_mat), <span class="at">epochs =</span> <span class="dv">500</span>, <span class="at">verbose =</span> <span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Después de verificar convergencia (chécalo examinando la variable <em>historia</em>), graficamos para ver que obtuvimos resultados similares:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>dat_3 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> x, <span class="at">f_2 =</span> <span class="fu">predict</span>(ejemplo_mod, <span class="fu">as.matrix</span>(x, <span class="at">ncol =</span> <span class="dv">1</span>))[,<span class="dv">1</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2/2 - 0s - 25ms/step</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dat_3, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> f_2)) <span class="sc">+</span> <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_line</span>(<span class="at">data =</span> dat_f, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> f), <span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_point</span>(<span class="at">data =</span> datos, <span class="fu">aes</span>(<span class="at">x =</span> x_1, <span class="at">y =</span> y))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Los coeficientes obtenidos se muestran abajo. Nótese: la primera componente de la lista son los coeficientes de la unidad 1 y 2 para <span class="math inline">\(x\)</span>. La segunda son los sesgos u ordenadas al origen, la tercera los coeficientes de la respuesta para las unidades 1 y 2, y el cuarto es el sesgo u ordenada al origen de la unidad de salida:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_weights</span>(ejemplo_mod)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+         [,1]      [,2]
+[1,] -2.45195 -2.848297
+
+[[2]]
+[1] -2.567333  2.578543
+
+[[3]]
+          [,1]
+[1,] -3.460155
+[2,]  3.080145
+
+[[4]]
+[1] -1.392124</code></pre>
+</div>
+</div>
+<p><strong>Ejercicio</strong>: compara los coeficientes que obtuviste en este ejemplo con los anteriores.</p>
+</section>
+</section>
+<section id="interacciones-en-redes-neuronales" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="interacciones-en-redes-neuronales"><span class="header-section-number">6.2</span> Interacciones en redes neuronales</h2>
+<p>Es posible capturar interacciones con redes neuronales. Consideremos el siguiente ejemplo simple:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x1, x2){</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="dv">2</span> <span class="sc">+</span> <span class="fl">0.1</span><span class="sc">*</span> x1 <span class="sc">+</span> <span class="fl">0.1</span> <span class="sc">*</span> x2 <span class="sc">+</span> <span class="dv">10</span> <span class="sc">*</span> (x1 <span class="sc">-</span> <span class="fl">0.5</span>) <span class="sc">*</span> (x2 <span class="sc">-</span> <span class="fl">0.5</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">x1 =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.05</span>), <span class="at">x2 =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.05</span>))</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">f =</span> <span class="fu">f</span>(x1, x2))</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(<span class="at">x=</span>x1, <span class="at">y=</span>x2)) <span class="sc">+</span> <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill=</span>f))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Esta función puede entenderse como un o exclusivo: la respuesta es alta sólo cuando <span class="math inline">\(x_1\)</span> y <span class="math inline">\(x_2\)</span> tienen valores opuestos (<span class="math inline">\(x_1\)</span> grande pero <span class="math inline">\(x_2\)</span> chica y viceversa).</p>
+<p>No es posible modelar correctamente esta función mediante el modelo lineal (sin interacciones). Pero podemos incluir la interacción en el modelo lineal o intentar usar una red neuronal. Primero simulamos unos datos y probamos el modelo logístico con y sin interacciones:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">322</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">2000</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>dat_ent <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x1 =</span> <span class="fu">rbeta</span>(n, <span class="dv">1</span>, <span class="dv">1</span>), <span class="at">x2 =</span> <span class="fu">rbeta</span>(n, <span class="dv">1</span>, <span class="dv">1</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">f =</span> <span class="fu">f</span>(x1, x2)) <span class="sc">|&gt;</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y =</span> f <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="fl">0.1</span>))</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>mod_1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2, <span class="at">data =</span> dat_ent)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>mod_1</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x1 + x2, data = dat_ent)
+
+Coefficients:
+(Intercept)           x1           x2  
+     1.8936       0.2046       0.2097  </code></pre>
+</div>
+</div>
+<p>El resultado del modelo lineal no es bueno:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">y_hat =</span> <span class="fu">fitted</span>(mod_1), <span class="at">y =</span> dat_ent<span class="sc">$</span>y) <span class="sc">|&gt;</span> </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> y_hat, <span class="at">y =</span> y)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>() <span class="sc">+</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_obs_pred</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Sin embargo, agregando una interacción lo mejoramos considerablemente (examina la raíz del error cuadrático medio, por ejemplo):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>mod_2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x1<span class="sc">:</span>x2, <span class="at">data =</span> dat_ent)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>mod_2</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x1 + x2 + x1:x2, data = dat_ent)
+
+Coefficients:
+(Intercept)           x1           x2        x1:x2  
+      4.499       -4.895       -4.885        9.964  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">y_hat =</span> <span class="fu">fitted</span>(mod_2), <span class="at">y =</span> dat_ent<span class="sc">$</span>y) <span class="sc">|&gt;</span> </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> y_hat, <span class="at">y =</span> y)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>() <span class="sc">+</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_obs_pred</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Observese la gran diferencia de error entre los dos modelos (en este caso, el sobreajuste no es un problema).</p>
+<p>Ahora consideramos qué red neuronal puede ser apropiada.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span><span class="fu">set_random_seed</span>(<span class="dv">421</span>) </span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>mod_inter <span class="ot">&lt;-</span> <span class="fu">keras_model_sequential</span>()</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>mod_inter <span class="sc">|&gt;</span> </span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_dense</span>(<span class="at">units =</span> <span class="dv">4</span>, <span class="at">activation =</span> <span class="st">"sigmoid"</span>,</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">name =</span> <span class="st">"capa_intermedia"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_dense</span>(<span class="at">units =</span> <span class="dv">1</span>, <span class="at">name =</span> <span class="st">"capa_final"</span>,</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">activation =</span> <span class="st">"linear"</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>mod_inter <span class="sc">|&gt;</span> <span class="fu">compile</span>(<span class="at">loss =</span> <span class="st">"mse"</span>, </span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">optimizer =</span> <span class="fu">optimizer_sgd</span>(<span class="at">learning_rate =</span> <span class="fl">0.3</span>, <span class="at">momentum =</span> <span class="fl">0.5</span>))</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>historia <span class="ot">&lt;-</span> mod_inter <span class="sc">|&gt;</span> </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(dat_ent <span class="sc">|&gt;</span> <span class="fu">select</span>(x1, x2) <span class="sc">|&gt;</span> <span class="fu">as.matrix</span>(), dat_ent<span class="sc">$</span>y,</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">batch_size =</span> <span class="dv">20</span>,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">epochs =</span> <span class="dv">100</span>, <span class="at">verbose =</span> <span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Verificamos que esta red captura la interacción:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>preds <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod_inter,</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  dat <span class="sc">|&gt;</span> <span class="fu">select</span>(x1, x2) <span class="sc">|&gt;</span> <span class="fu">as.matrix</span>())</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>14/14 - 0s - 4ms/step</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">f_red =</span> preds)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(<span class="at">x =</span> x1, <span class="at">y =</span> x2)) <span class="sc">+</span> </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">fill =</span> f_red))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>preds_ent <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod_inter, dat_ent <span class="sc">|&gt;</span> <span class="fu">select</span>(x1, x2) <span class="sc">|&gt;</span> <span class="fu">as.matrix</span>())</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>63/63 - 0s - 842us/step</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">pred =</span> preds_ent[,<span class="dv">1</span>], <span class="at">f =</span> dat_ent<span class="sc">$</span>y) <span class="sc">|&gt;</span> </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> pred, <span class="at">y =</span> f)) <span class="sc">+</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_obs_pred</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Aunque podemos extraer los cálculos de la red ajustada, vamos a hacer el cálculo de la red a mano. La función feed forward es:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>beta <span class="ot">&lt;-</span> <span class="fu">get_weights</span>(mod_inter)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>feed_fow <span class="ot">&lt;-</span> <span class="cf">function</span>(beta, x){</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">&lt;-</span> <span class="fu">h</span>(<span class="fu">t</span>(beta[[<span class="dv">1</span>]]) <span class="sc">%*%</span> x <span class="sc">+</span> <span class="fu">as.matrix</span>(beta[[<span class="dv">2</span>]], <span class="dv">2</span>, <span class="dv">1</span>)) </span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  f <span class="ot">&lt;-</span> <span class="fu">t</span>(beta[[<span class="dv">3</span>]]) <span class="sc">%*%</span> a <span class="sc">+</span> <span class="fu">as.matrix</span>(beta[[<span class="dv">4</span>]], <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  f</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Observación</strong>: ¿cómo funciona esta red? Consideremos la capa intermedia (3 unidades) para cuatro casos: <span class="math inline">\((0,0), (0,1), (1,0), (1,1)\)</span>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>mat_entrada <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x_1 =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="at">x_2 =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>)) <span class="sc">|&gt;</span> <span class="fu">as.matrix</span>()</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>capa_1 <span class="ot">&lt;-</span> <span class="fu">keras_model</span>(<span class="at">inputs =</span> mod_inter<span class="sc">$</span>inputs[[<span class="dv">1</span>]],</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">outputs =</span> <span class="fu">get_layer</span>(mod_inter, <span class="st">"capa_intermedia"</span>)<span class="sc">$</span>output)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>pred_mat <span class="ot">&lt;-</span> <span class="fu">predict</span>(capa_1, mat_entrada) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>1/1 - 0s - 29ms/step</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(pred_mat) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"apagadas"</span>, <span class="st">"segunda"</span>, <span class="st">"primera"</span>, <span class="st">"ambas"</span>)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>pred_mat</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         [,1] [,2] [,3] [,4]
+apagadas 0.09 0.00 0.57 0.07
+segunda  0.55 0.05 0.07 0.00
+primera  0.00 0.05 0.05 0.56
+ambas    0.05 0.56 0.00 0.05</code></pre>
+</div>
+</div>
+<p>Los pesos de la última capa son:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>beta[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+          [,1]
+[1,] -5.659053
+[2,]  5.010898
+[3,]  5.338413
+[4,] -5.363252
+
+[[2]]
+[1] 2.272053</code></pre>
+</div>
+</div>
+<p><strong>Ejercicio</strong>: interpreta la red en términos de qué unidades están <em>encendidas</em> (valor cercano a 1) o <em>apagadas</em> (valor cercano a 0). ¿Puedes ajustar este modelo con dos tres unidades intermedias? Haz varias pruebas: ¿qué dificultades encuentras?</p>
+</section>
+<section id="cálculo-en-redes-feed-forward" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="cálculo-en-redes-feed-forward"><span class="header-section-number">6.3</span> Cálculo en redes: feed-forward</h2>
+<p>Ahora generalizamos lo que vimos arriba para definir la arquitectura básica de redes neuronales y cómo se hacen cálculos en las redes.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A las variables originales les llamamos <em>capa de entrada</em> de la red, y a la variable de salida <em>capa de salida</em>. Puede haber más de una capa intermedia. A estas les llamamos <em>capas ocultas</em>.</p>
+<p>Cuando todas las conexiones posibles de cada capa a la siguiente están presente, decimos que la red es <em>completamente conexa</em>.</p>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="500"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Como vimos en el ejemplo de arriba, para hacer cálculos en la red empezamos con la primera capa, hacemos combinaciones lineales y aplicamos nuestra función no lineal <span class="math inline">\(h\)</span>. Una vez que calculamos la segunda capa, podemos calcular la siguiente de la misma forma: combinaciones lineales y aplicación de <span class="math inline">\(h\)</span>. Y así sucesivamente hasta que llegamos a la capa final.</p>
+</section>
+<section id="notación" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="notación"><span class="header-section-number">6.4</span> Notación</h2>
+<p>Sea <span class="math inline">\(L\)</span> el número total de capas. En primer lugar, para un cierto caso de entrada <span class="math inline">\(x = (x_1,x_2,\ldots, x_p)\)</span>, denotamos por:</p>
+<ul>
+<li><span class="math inline">\(a^{(l)}_j\)</span> el valor que toma la unidad <span class="math inline">\(j\)</span> de la capa <span class="math inline">\(l\)</span>, para <span class="math inline">\(j=0,1,\ldots, n_{l}\)</span>, donde <span class="math inline">\(n_l\)</span> es el número de unidades de la capa <span class="math inline">\(l\)</span>.</li>
+<li>Ponemos <span class="math inline">\(a^{(l)}_0=1\)</span> para lidiar con los sesgos.</li>
+<li>*En particular, ponemos <span class="math inline">\(a^{(1)}_j = x_j\)</span>, que son los valores de las entradas (primera capa)</li>
+<li>Para un problema de regresión, la última capa solo tiene un elemento, que es <span class="math inline">\(y = a^{(L)}\)</span>.</li>
+</ul>
+<p>Adicionalmente, escribimos</p>
+<p><span class="math inline">\(\theta_{i,k}^{(l)}=\)</span> es el peso de entrada <span class="math inline">\(a_{k}^{(l-1)}\)</span> de capa <span class="math inline">\(l-1\)</span> en la entrada <span class="math inline">\(a_{i}^{(l)}\)</span> de la capa <span class="math inline">\(l\)</span>.</p>
+<p>Los sesgos están dados por <span class="math display">\[\theta_{i,0}^{(l)}\]</span></p>
+<section id="ejemplo" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="ejemplo">Ejemplo</h4>
+<p>En nuestro ejemplo, tenemos que en la capa <span class="math inline">\(l=3\)</span> hay dos unidades. Así que podemos calcular los valores <span class="math inline">\(a^{(3)}_1\)</span> y <span class="math inline">\(a^{(3)}_2\)</span>. Están dados por</p>
+<p><span class="math display">\[a_1^{(3)} = h(\theta_{1,0}^{(2)} + \theta_{1,1}^{(2)} a_1^{(2)}+ \theta_{1,2}^{(2)}a_2^{(2)}+ \theta_{1,3}^{(2)} a_3^{(2)})\]</span> <span class="math display">\[a_2^{(3)} = h(\theta_{2,0}^{(2)} + \theta_{2,1}^{(2)} a_1^{(2)}+ \theta_{2,2}^{(2)}a_2^{(2)}+ \theta_{2,3}^{(2)} a_3^{(2)})\]</span></p>
+<p>Como se ilustra en la siguiente gráfica:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="550"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Para visualizar las ordenadas (que también se llaman <strong>sesgos</strong> en este contexto), ponemos <span class="math inline">\(a_{0}^{(2)}=1\)</span>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid figure-img" width="550"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="ejemplo-1" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="ejemplo-1">Ejemplo</h4>
+<p>Consideremos propagar a la capa 3 a partir de la capa 2. Usaremos los siguientes pesos para capa 3 y valores de la capa 2 (en gris están los sesgos):</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" width="500"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Que en nuestra notación escribimos como <span class="math display">\[a^{(2)}_0 = 1, a^{(2)}_1 = -2, a^{(2)}_2 = 5, a^{(2)}=3\]</span> y los pesos son, para la primera unidad: <span class="math display">\[\theta^{(2)}_{1,0} = 3,  \,\,\, \theta^{(2)}_{1,1} = 1.5,\,\,\,\theta^{(2)}_{1,2} = -1,\,\,\theta^{(2)}_{1,3} = -0.5 \]</span> y para la segunda unidad <span class="math display">\[\theta^{(2)}_{2,0} = 1,  \,\,\, \theta^{(2)}_{2,1} = 2,\,\,\,\theta^{(2)}_{2,2} = 0.5,\,\, \theta^{(2)}_{2,3} = -0.2\]</span> Y ahora queremos calcular los valores que toman las unidades de la capa 3, que son <span class="math inline">\(a^{(3)}_1\)</span> y <span class="math inline">\(a^{(3)}_2\)</span>$</p>
+<p>Para hacer feed forward a la siguiente capa, hacemos entonces</p>
+<p><span class="math display">\[a^{(3)}_1 = h(3 + a^{(2)}_1 - a^{(2)}_2 -0.5 a_3^{(2)}),\]</span> <span class="math display">\[a^{(3)}_2 = h(1 + 2a^{(2)}_1 + 0.5a^{(2)}_2 - 0.2 a_3^{(2)}),\]</span></p>
+<p>Ponemos los pesos y valores de la capa 2 (incluyendo sesgo):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>a_2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="sc">-</span><span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">3</span>) <span class="co"># ponemos un 1 al principio para el sesgo</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>theta_2_1 <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="fl">1.5</span>, <span class="sc">-</span><span class="fl">1.0</span>, <span class="sc">-</span><span class="fl">0.5</span>)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>theta_2_2 <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="fl">0.5</span>, <span class="sc">-</span><span class="fl">0.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>y calculamos</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>a_3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fu">h</span>(<span class="fu">sum</span>(theta_2_1<span class="sc">*</span>a_2)),<span class="fu">h</span>(<span class="fu">sum</span>(theta_2_2<span class="sc">*</span>a_2))) <span class="co"># ponemos un 1 al principio</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>a_3</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.000000000 0.001501182 0.249739894</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-40-1.png" class="img-fluid figure-img" width="500"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="algoritmo-de-feed-forward" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="algoritmo-de-feed-forward"><span class="header-section-number">6.5</span> Algoritmo de Feed forward</h2>
+<p>Para calcular los valores de salida de una red a partir de pesos y datos de entrada, usamos el algoritmo feed-forward, calculando capa por capa.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Feed-forward
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Para la primera capa, escribimos las variables de entrada: <span class="math display">\[a^{(1)}_j = x_j, j=1\ldots,n_1\]</span> Para la primera capa oculta, o la segunda capa <span class="math display">\[a^{(2)}_j = h\left( \theta_{j,0}^{(1)}+ \sum_{k=1}^{n_1}  \theta_{j,k}^{(1)}  a^{(1)}_k    \right), j=1\ldots,n_2\]</span> para la <span class="math inline">\(l\)</span>-ésima capa: <span class="math display">\[a^{(l)}_j = h\left( \theta_{j,0}^{(l-1)}+ \sum_{k=1}^{n_{l-1}}  \theta_{j,k}^{(l-1)}  a^{(l-1)}_k    \right), j=1\ldots,n_{l}\]</span> y así sucesivamente. Para la capa final o de salida en un problema de regresión, suponiendo que tenemos <span class="math inline">\(L\)</span> capas (<span class="math inline">\(L-2\)</span> capas ocultas): <span class="math display">\[f(x) =     \theta_{1,0}^{(L-1)}+ \sum_{k=1}^{n_{L-1}}  \theta_{1,k}^{(L-1)}  a^{(L-1)}_k     .\]</span></p>
+</div>
+</div>
+<p>Nótese que entonces:</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Cada capa se caracteriza por el conjunto de parámetros <span class="math inline">\(\Theta^{(l)}\)</span>, que es una matriz de <span class="math inline">\(n_l\times n_{l-1}\)</span>.</p>
+<p>La red completa entonces se caracteriza por:</p>
+<ul>
+<li>La estructura elegida (número de capas ocultas y número de nodos en cada capa oculta).</li>
+<li>Las matrices de pesos en cada capa <span class="math inline">\(\Theta^{(1)},\Theta^{(2)},\ldots, \Theta^{(L-1)}\)</span></li>
+</ul>
+</div>
+</div>
+<p>Adicionalmente, escribimos en forma vectorial: <span class="math display">\[a^{(l)} = (a^{(l)}_0, a^{(l)}_1, a^{(l)}_2, \ldots, a^{(l)}_{n_l})^t\]</span></p>
+<p>Para calcular la salidas, igual que hicimos, antes, propagaremos hacia adelante los valores de las variables de entrada usando los <em>pesos</em>. Agregando entradas adicionales en cada capa <span class="math inline">\(a_0^{(l)}\)</span>, <span class="math inline">\(l=1,2,\ldots, L-1\)</span>, donde <span class="math inline">\(a_0^{l}=1\)</span>, y agregando a <span class="math inline">\(\Theta^{(l)}\)</span> una columna con las ordenadas al origen (o sesgos) podemos escribir:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Feed-forward matricial
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><p>Capa 1 (vector de entradas) <span class="math display">\[ a^{(1)} = x\]</span></p></li>
+<li><p>Capa 2 <span class="math display">\[ a^{(2)} = h(\Theta^{(1)}a^{(1)})\]</span></p></li>
+<li><p>Capa <span class="math inline">\(l\)</span> (oculta) <span class="math display">\[ a^{(l)} = h(\Theta^{(l-1)}a^{(l-1)})\]</span> donde <span class="math inline">\(h\)</span> se aplica componente a componente sobre los vectores correspondientes.</p></li>
+<li><p>Capa de salida:</p></li>
+</ul>
+<p>En un problema de regresión, la capa de salida se calcula como un regresión lineal: <span class="math display">\[a^{(L)}= f(x) = \Theta^{(L-1)}a^{(L-1)}\]</span> Nótese que feed-foward consiste principalmente de multiplicaciones de matrices con algunas aplicaciones de <span class="math inline">\(h\)</span></p>
+</div>
+</div>
+</section>
+<section id="algoritmo-de-backpropagation-cálculo-del-gradiente-regresión" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="algoritmo-de-backpropagation-cálculo-del-gradiente-regresión"><span class="header-section-number">6.6</span> Algoritmo de Backpropagation: cálculo del gradiente (regresión)</h2>
+<p>Para ajustar los pesos y sesgos de las redes (valores <span class="math inline">\(\theta\)</span>), utilizaremos descenso en gradiente y otros algoritmos derivados del gradiente (descenso estocástico). En esta parte entonces veremos cómo calcular estos gradientes con el algoritmo de <em>back-propagation</em>, que es una aplicación de la regla de la cadena para derivar. Back-propagation resulta en una fórmula recursiva donde propagamos errores de la red como gradientes desde el final de red (capa de salida) hasta el principio, capa por capa.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Cálculo de backpropagation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>En la actualidad, no es necesario programar los cálculos de <em>backpropagation</em> directamente. Más bien, utilizamos <em>diferenciación automática</em> que, considerando la definición de la red neuronal, automáticamente crea una función que calcula el gradiente, utilizando la regla de la cadena y la derivada de las funciones básicas.</p>
+</div>
+</div>
+<p><strong>Consideramos el problema de regresión</strong></p>
+<p>Recordamos que la pérdida cuadrática (con regularización ridge, dividiendo entre 2 por conveniencia) es</p>
+<p><span class="math display">\[D = -\frac{1}{2n}\sum_{i=1}^n (y^{(i)} - f(x^{(i)}))^2  + \lambda \sum_{l=2}^{L} \sum_{k=1}^{n_{l-1}} \sum_{j=1}^{n_l}(\theta_{j,k}^{(l)})^2.\]</span></p>
+<p>Queremos entonces calcular las derivadas de la devianza o función de pérdida con respecto a cada parámetro <span class="math inline">\(\theta_{j,k}^{(l)}\)</span>. Esto nos proporciona el gradiente para nuestro algoritmo de descenso.</p>
+<p><strong>Consideramos aquí el problema de regresión con pérdida cuadrática y sin regularización</strong>. La parte de la parcial que corresponde al término de regularización es fácil de agregar al final.</p>
+<p>Recordamos también nuestra notación para la función logística (o sigmoide):</p>
+<p><span class="math display">\[h(z)=\frac{1}{1+e^{-z}}.\]</span> Necesitaremos su derivada, que está dada por (cálculala): <span class="math display">\[h'(z) = h(z)(1-h(z))\]</span></p>
+<section id="cálculo-para-un-caso-de-entrenamiento" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="cálculo-para-un-caso-de-entrenamiento">Cálculo para un caso de entrenamiento</h3>
+<p>Primero simplificamos el problema y consideramos calcular las parciales <em>para un solo caso de entrenamiento</em> <span class="math inline">\((x,y)\)</span>: <span class="math display">\[ D=  \frac{1}{2}\left ( y -f(x)\right)^2 . \]</span></p>
+<p>Después sumaremos sobre toda la muestra de entrenamiento. Entonces queremos calcular <span class="math display">\[\frac{\partial D}{\partial \theta_{j,k}^{(l)}}\]</span></p>
+<p>Y escribiremos, con la notación de arriba, <span class="math display">\[a^{(l+1)}_j = h(z^{(l+1)}_j)\]</span> donde <span class="math display">\[z^{(l+1)} = \Theta^{(l)} a^{(l)},\]</span> que coordenada a coordenada se escribe como <span class="math display">\[z^{(l+1)}_j =  \sum_{k=0}^{n_{l}}  \theta_{j,k}^{(l)}  a^{(l)}_k\]</span></p>
+<section id="paso-1-derivar-respecto-a-capa-l1" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="paso-1-derivar-respecto-a-capa-l1">Paso 1: Derivar respecto a capa <span class="math inline">\(l+1\)</span></h4>
+<p>Como los valores de cada capa determinan los valores de salida y la devianza, podemos escribir (recordemos que <span class="math inline">\(a_0^{(l)}=1\)</span> es constante): <span class="math display">\[D=D(a_0^{(l+1)},a_1^{(l+1)},a_2^{(l+1)},\ldots, a_{n_{l+1}}^{(l+1)})=D(a_1^{(l+1)},a_2^{(l+1)},\ldots, a_{n_{l+1}}^{(l+1)})\]</span></p>
+<p>Así que por la regla de la cadena para varias variables: <span class="math display">\[\frac{\partial D}{\partial \theta_{j,k}^{(l)}} =
+\sum_{t=1}^{n_{l}} \frac{\partial D}{\partial a_t^{(l+1)}}\frac{\partial a_t^{(l+1)}}
+{\partial \theta_{j,k}^{(l)} }\]</span></p>
+<p>Pero si vemos dónde aparece <span class="math inline">\(\theta_{j,k}^{(l)}\)</span> en la gráfica de la red:</p>
+<p><span class="math display">\[ \cdots a^{(l)}_k \xrightarrow{\theta_{j,k}^{(l)}} a^{(l+1)}_j  \cdots \rightarrow  D\]</span> Entonces podemos concluir que <span class="math inline">\(\frac{\partial a_t^{(l+1)}}{\partial \theta_{j,k}^{(l)}} =0\)</span> cuando <span class="math inline">\(t\neq j\)</span> (pues no dependen de <span class="math inline">\(\theta_{j,k}^{(l)}\)</span>),</p>
+<p>y entonces, para toda <span class="math inline">\(j=1,2,\ldots, n_{l+1}, k=0,1,\ldots, n_{l}\)</span> <span id="eq-parcial"><span class="math display">\[
+\frac{\partial D}{\partial \theta_{j,k}^{(l)}} =
+\frac{\partial D}{\partial a_j^{(l+1)}}\frac{\partial a_j^{(l+1)}}{\partial \theta_{j,k}^{(l)} }.
+\tag{6.1}\]</span></span></p>
+<p>Adicionalmente, como <span class="math display">\[a_j^{(l+1)} = h(z_j^{(l+1)}) = h\left (\sum_{k=0}^{n_{l}}  \theta_{j,k}^{(l)}  a^{(l)}_k \right )\]</span> y las <span class="math inline">\(a_k^{(l)}\)</span> no dependen de <span class="math inline">\(\theta_{j,k}^{(l)}\)</span>, tenemos por la regla de la cadena que</p>
+<p><span class="math display">\[
+\frac{\partial a_j^{(l+1)}}{\partial \theta_{j,k}^{(l)} } = h'(z_j^{(l+1)})a_k^{(l)}.
+\]</span></p>
+<p>Esta última expresión podemos calcularla pues sólo requiere la derivada de <span class="math inline">\(h\)</span> y los valores otenidos en el paso de feed-forward.</p>
+</section>
+<section id="paso-2-obtener-fórmula-recursiva" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="paso-2-obtener-fórmula-recursiva">Paso 2: Obtener fórmula recursiva</h4>
+<p>Así que sólo nos queda calcular las parciales (<span class="math inline">\(j = 1,\ldots, n_l\)</span>) <span class="math display">\[\frac{\partial D}{\partial a_j^{(l)}}\]</span></p>
+<p>Para obtener una fórmula recursiva para esta cantidad (hacia atrás), aplicamos otra vez regla de la cadena, pero con respecto a la capa <span class="math inline">\(l\)</span> (ojo: queremos obtener una fórmula recursiva!):</p>
+<p><span class="math display">\[\frac{\partial D}{\partial a_j^{(l)}}= \sum_{s=1}^{n_{l+1}}
+\frac{\partial D}{\partial a_s^{(l+1)}}\frac{\partial  a_s^{(l+1)}}{\partial a_j^{(l)}},\]</span></p>
+<p>que se puede entender a partir de este diagrama:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Nótese que la suma empieza en <span class="math inline">\(s=1\)</span>, no en <span class="math inline">\(s=0\)</span>, pues <span class="math inline">\(a_0^{(l+1)}\)</span> no depende de <span class="math inline">\(a_k^{(l)}\)</span>.</p>
+<p>En este caso los elementos de la suma no se anulan necesariamente. Primero consideramos la derivada de:</p>
+<p><span class="math display">\[\frac{\partial  a_s^{(l+1)}}{\partial a_j^{(l)}}=h'(z_s^{(l+1)})\theta_{s,j}^{(l)},\]</span></p>
+<p>de modo que</p>
+<p><span class="math display">\[\frac{\partial D}{\partial a_j^{(l)}}= \sum_{s=1}^{n_l}
+\frac{\partial D}{\partial a_s^{(l+1)}} h'(z_s^{(l+1)})\theta_{s,j}^{(l)}.\]</span></p>
+<p>Nótese que esto nos da una fórmula recursiva para las parciales que nos falta calcular (de <span class="math inline">\(D\)</span> con respecto a <span class="math inline">\(a\)</span>), pues las otras cantidades las conocemos por backpropagation.</p>
+</section>
+<section id="paso-3-simplificación-de-la-recursión" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="paso-3-simplificación-de-la-recursión">Paso 3: Simplificación de la recursión</h4>
+<p>Definimos para <span class="math inline">\(l=1,\ldots,L-2\)</span>:</p>
+<p><span id="eq-delta-def-a"><span class="math display">\[
+\delta_s^{ (l+1)}=\frac{\partial D}{\partial a_s^{(l+1)}} h'(z_s^{(l+1)})
+\tag{6.2}\]</span></span></p>
+<p>de manera que la ecuación recursiva es</p>
+<p><span id="eq-delta-def"><span class="math display">\[
+\frac{\partial D}{\partial a_j^{(l)}} = \sum_{s=1}^{n_{l+1}}
+\delta_s^{(l+1)}\theta_{s,j}^{(l)}.
+\tag{6.3}\]</span></span></p>
+<p>Tenemos que si <span class="math inline">\(l=2,\ldots,L-1\)</span>, entonces podemos escribir (usando (<a href="#eq-delta-def" class="quarto-xref">Ecuación&nbsp;<span>6.3</span></a>)) como fórmula recursiva:</p>
+<p><span id="eq-delta-recursion"><span class="math display">\[
+\delta_j^{(l)}
+= \left (\sum_{s=1}^{n_l} \delta_s^{(l+1)} \theta_{s,j}^{(l)}\right ) h'(z_j^{(l)}),
+\tag{6.4}\]</span></span> para <span class="math inline">\(j=1,2,\ldots, n_{l}\)</span>.</p>
+</section>
+<section id="paso-4-condiciones-iniciales" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="paso-4-condiciones-iniciales">Paso 4: Condiciones iniciales</h4>
+<p>Para la última capa, tenemos que (en la ecuación de arriba, en este caso la activación <span class="math inline">\(h\)</span> es <span class="math inline">\(h(z)=z\)</span> para la última capa):</p>
+<p><span class="math display">\[\delta_1^{(L)}=-(y - f(x)).\]</span></p>
+<p>Nótese que esta cantidad indica hacia dónde tenemos que mover <span class="math inline">\(f(x)\)</span> para hacer el error más chico.</p>
+</section>
+<section id="paso-5-cálculo-de-parciales" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="paso-5-cálculo-de-parciales">Paso 5: Cálculo de parciales</h4>
+<p>Finalmente, usando (<a href="#eq-parcial" class="quarto-xref">Ecuación&nbsp;<span>6.1</span></a>) y (<a href="#eq-delta-def-a" class="quarto-xref">Ecuación&nbsp;<span>6.2</span></a>) , obtenemos <span class="math display">\[\frac{\partial D}{\partial \theta_{j,k}^{(l)}} = \delta_j^{(l+1)}a_k^{(l)},\]</span></p>
+<p>y con esto ya podemos hacer backpropagation para calcular el gradiente sobre cada caso de entrenamiento, y solo resta acumular para obtener el gradiente sobre la muestra de entrenamiento.</p>
+<p>Muchas veces es útil escribir una versión vectorizada (importante para implementar):</p>
+</section>
+<section id="paso-6-versión-matricial" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="paso-6-versión-matricial">Paso 6: Versión matricial</h4>
+<p>Ahora podemos escribir estas ecuaciones en forma vectorial. En primer lugar, <span class="math display">\[\delta^{(L)}=f(x)-y.\]</span> Y además se puede ver de la ecuación (<a href="#eq-delta-recursion" class="quarto-xref">Ecuación&nbsp;<span>6.4</span></a>) que (<span class="math inline">\(\Theta_{*}^{(l+1)}\)</span> denota la matriz de pesos <em>sin</em> la columna correspondiente al sesgo):</p>
+<p><span id="eq-delta-recursion-mat"><span class="math display">\[
+\delta^{(l)}=\left( \Theta_{*}^{(l)}    \right)^t\delta^{(l+1)} \circ h'(z^{(l)})
+\tag{6.5}\]</span></span></p>
+<p>donde <span class="math inline">\(\circ\)</span> denota el producto componente a componente.</p>
+<p>Ahora todo ya está calculado. Lo interesante es que las <span class="math inline">\(\delta^{(l)}\)</span> se calculan de manera recursiva.</p>
+</section>
+</section>
+<section id="algoritmo-de-backpropagation" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="algoritmo-de-backpropagation">Algoritmo de backpropagation</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Nota
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>#Backpropagation</p>
+<p>Para problema de clasificación con regularización $ $. Para <span class="math inline">\(i=1,\ldots, N,\)</span> tomamos el dato de entrenamiento <span class="math inline">\((x^{(i)}, y^{(i)})\)</span> y hacemos:</p>
+<ol type="1">
+<li>Ponemos <span class="math inline">\(a^{(1)}=x^{(i)}\)</span> (vector de entradas, incluyendo 1).</li>
+<li>Calculamos <span class="math inline">\(a^{(2)},a^{(3)},\ldots, a^{(L)}\)</span> usando feed forward para la entrada <span class="math inline">\(x^{(i)}.\)</span></li>
+<li>Calculamos <span class="math inline">\(\delta^{(L)}=a^{(L)}-y^{(i)}\)</span>, y luego <span class="math inline">\(\delta^{(L-1)},\ldots, \delta^{(2)}\)</span> según la recursión (<a href="#eq-delta-recursion" class="quarto-xref">Ecuación&nbsp;<span>6.4</span></a>).</li>
+<li>Acumulamos <span class="math inline">\(\Delta_{j,k}^{(l)}=\Delta_{j,k}^{(l)} + \delta_j^{(l+1)}a_k^{(l)}\)</span>.</li>
+<li>Finalmente, ponemos, si <span class="math inline">\(k\neq 0\)</span>, <span class="math display">\[D_{j,k}^{(l)} = \frac{2}{N}\Delta_{j,k}^{(l)} + 2\lambda\theta_{j,k}^{(l)}\]</span> y si <span class="math inline">\(k=0\)</span>, <span class="math display">\[D_{j,k}^{(l)} = \frac{2}{N}\Delta_{j,k}^{(l)} .\]</span> Entonces: <span class="math display">\[D_{j,k}^{(l)} =\frac{\partial D}{\partial \theta_{j,k}^{(l)}}.\]</span></li>
+</ol>
+<p>Nótese que back-propagation consiste principalmente de multiplicaciones de matrices con algunas aplicaciones de <span class="math inline">\(h\)</span> y acumulaciones, igual que feed-forward.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="ajuste-de-parámetros-introducción" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="ajuste-de-parámetros-introducción"><span class="header-section-number">6.7</span> Ajuste de parámetros (introducción)</h2>
+<p>Consideramos la versión con regularización ridge (también llamada L2) de la devianza de entrenamiento como nuestro función objetivo:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ajuste de redes neuronales
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Para un problema de regresión, ajustamos los pesos <span class="math inline">\(\Theta^{(1)},\Theta^{(2)},\ldots, \Theta^{(L)}\)</span> de la red intentando minimizar el error cuadrático medio (penalizado) sobre la muestra de entrenamiento: <span class="math display">\[D = -\frac{1}{2n}\sum_{i=1}^n (y^{(i)} - f(x^{i}))^2= + \lambda \sum_{l=2}^{L} \sum_{k=1}^{n_{l-1}} \sum_{j=1}^{n_l}(\theta_{j,k}^{(l)})^2.\]</span> Este problema en general no es convexo y <em>puede tener múltiples mínimos</em>.</p>
+</div>
+</div>
+<p>Veremos el proceso de ajuste, selección de arquitectura, etc. más adelante. Por el momento hacemos unas observaciones acerca de este problema de minimización:</p>
+<ul>
+<li><p>Hay varios algoritmos para minimizar este error, algunos avanzados incluyendo información de segundo orden (como Newton), pero actualmente las técnicas más populares, para redes grandes, están derivadas de descenso en gradiente. Más específicamente, una variación, que es <em>descenso estocástico</em>.</p></li>
+<li><p>Que el algoritmo depende principalmente de multiplicaciones de matrices y acumulaciones implica que puede escalarse de diversas maneras. Una es paralelizando sobre la muestra de entrenamiento (y calcular acumulados al final), pero también se pueden paralelizar las multiplicaciones de matrices (para lo cual los GPUs se prestan muy bien).</p></li>
+<li><p>Para redes neuronales, el gradiente se calcula con un algoritmo que se llama <em>back-propagation</em>, que es una aplicación de la regla de la cadena para propagar errores desde la capa de salida a lo largo de todas las capas para ajustar los pesos y sesgos.</p></li>
+<li><p>En estos problemas no buscamos el mínimo global, sino un mínimo local de buen desempeño. Puede haber múltiples mínimos, puntos silla, regiones relativamente planas, precipicios (curvatura alta). Nótese que la simetría implica que podemos obtener la misma red cambiando pesos entre neuronas y las conexiones correspondientes. Esto implica que necesariamente hay varios mínimos.</p></li>
+<li><p>Todo esto dificulta el entrenamiento de redes neuronales grandes. Para redes grandes, ni siquiera esperamos a alcanzar un mínimo local, sino que nos a veces detenemos prematuramente cuando obtenemos el mejor desempeño posible.</p></li>
+<li><p>Para este problema, no tiene sentido comenzar las iteraciones con todos los pesos igual a cero, pues las unidades de la red son simétricas: no hay nada que distinga una de otra si todos los pesos son iguales. Esto quiere decir que si iteramos, todas las neuronas van a aprender lo mismo.</p></li>
+<li><p>Es importante no comenzar valores de los pesos grandes, pues las funciones logísticas pueden quedar en regiones planas donde la minimización es lenta, o podemos tener gradientes demasiado grandes y produzcan inestabilidad en el cálculo del gradiente.</p></li>
+<li><p>El ajuste de la <strong>tasa de aprendizaje es un parámetro importante</strong>, más delicado que para problemas convexos. Generalmente lo tratamos con un hiperparámetro más que hay que afinar. Tasas demasiado grandes pueden llevarnos a mínimos locales relativamente malos.</p></li>
+<li><p>Generalmente los pesos se inicializan al azar con variables independientes gaussianas o uniformes centradas en cero, y con varianza chica (por ejemplo <span class="math inline">\(U(-0.5,0.5)\)</span>). Una recomendación es usar <span class="math inline">\(U(-1/\sqrt{m}, 1/\sqrt{m})\)</span> donde <span class="math inline">\(m\)</span> es el número de entradas. En general, hay que experimentar con este parámetro.</p></li>
+</ul>
+<p>El proceso para ajustar una red es entonces:</p>
+<ul>
+<li>Definir número de capas ocultas, número de neuronas por cada capa, y un valor del parámetro de regularización. Estandarizar las entradas. Usualmente podemos probar comenzar con una o dos capas ocultas, de tamaño proporcional al número de entradas. Es buena idea comenzar con una red relativamente grande que tienen error bajo de entrenamiento aunque sobreajuste, y después regularizar y refinar su tamaño.</li>
+<li>Seleccionar parámetros al azar para <span class="math inline">\(\Theta^{(2)},\Theta^{(3)},\ldots, \Theta^{(L)}\)</span>. Se toman, por ejemplo, normales con media 0 y varianza chica.</li>
+<li>Correr un algoritmo de minimización del error mostrada arriba. <strong>Es necesario experimentar con los parámetros del algoritmo de minimización</strong>.</li>
+<li>Verificar convergencia del algoritmo a un mínimo local (o el algoritmo no está mejorando).</li>
+<li>Predecir usando el modelo ajustado.</li>
+</ul>
+<p>Finalmente, podemos probar distintas arquitecturas y valores del parámetros de regularización, para afinar estos parámetros según validación cruzada o una muestra de validación.</p>
+<section id="ejemplo-regresión" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="ejemplo-regresión">Ejemplo (regresión)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>dat_grasa <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="at">file =</span> <span class="st">'../datos/bodyfat.csv'</span>) </span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">183</span>)</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>grasa_particion <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(dat_grasa, <span class="fl">0.5</span>)</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>grasa_ent <span class="ot">&lt;-</span> <span class="fu">training</span>(grasa_particion)</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>grasa_pr <span class="ot">&lt;-</span> <span class="fu">testing</span>(grasa_particion)</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(grasa_ent)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 126</code></pre>
+</div>
+</div>
+<p>Una exploración de este conjunto de datos revela algunos datos sospechosos. En particular un individuo con estatura de 30 pulgadas (alrededor de 75 cm), con peso normal. Probablemente no queremos incluir en entrenamiento este caso, y tampoco hacer predicciones para posibles personas que tengan tales dimensiones:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>g_1 <span class="ot">&lt;-</span> grasa_ent <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> estatura, <span class="at">y =</span> peso)) <span class="sc">+</span> </span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>g_2 <span class="ot">&lt;-</span> grasa_ent <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> abdomen, <span class="at">y =</span> peso)) <span class="sc">+</span> </span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>g_1 <span class="sc">+</span> g_2</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>grasa_receta <span class="ot">&lt;-</span> <span class="fu">recipe</span>(grasacorp <span class="sc">~</span> ., grasa_ent) <span class="sc">|&gt;</span> </span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_filter</span>(estatura <span class="sc">&gt;</span> <span class="dv">50</span>) <span class="sc">|&gt;</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_predictors</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prep</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(keras3)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="co"># entrenamiento</span></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>x_grasa <span class="ot">&lt;-</span> grasa_receta <span class="sc">|&gt;</span> <span class="fu">juice</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>grasacorp) <span class="sc">|&gt;</span> <span class="fu">as.matrix</span>()</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>vars_nombres <span class="ot">&lt;-</span> <span class="fu">colnames</span>(x_grasa)</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>y_grasa <span class="ot">&lt;-</span> grasa_receta <span class="sc">|&gt;</span> <span class="fu">juice</span>() <span class="sc">|&gt;</span> <span class="fu">pull</span>(grasacorp)</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a><span class="co"># validación</span></span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>x_grasa_pr <span class="ot">&lt;-</span> grasa_receta <span class="sc">|&gt;</span> <span class="fu">bake</span>(grasa_pr) <span class="sc">|&gt;</span> </span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>grasacorp) <span class="sc">|&gt;</span> <span class="fu">as.matrix</span>()</span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>y_grasa_pr <span class="ot">&lt;-</span> grasa_receta <span class="sc">|&gt;</span> <span class="fu">bake</span>(grasa_pr) <span class="sc">|&gt;</span> <span class="fu">pull</span>(grasacorp)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>modelo_red <span class="ot">&lt;-</span> <span class="fu">keras_model_sequential</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_dense</span>(<span class="at">units =</span> <span class="dv">50</span>, <span class="at">activation =</span> <span class="st">"sigmoid"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_dense</span>(<span class="at">units =</span> <span class="dv">50</span>, <span class="at">activation =</span> <span class="st">"sigmoid"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_dense</span>(<span class="at">units =</span> <span class="dv">1</span>, <span class="at">activation =</span> <span class="st">"linear"</span>)</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>modelo_red <span class="sc">|&gt;</span> <span class="fu">compile</span>(</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">loss =</span> <span class="st">"mse"</span>, <span class="at">metrics =</span> <span class="st">"mse"</span>,</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">optimizer =</span> <span class="fu">optimizer_sgd</span>(<span class="at">learning_rate =</span> <span class="fl">0.01</span>, <span class="at">momentum =</span> <span class="fl">0.9</span>)</span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>historia <span class="ot">&lt;-</span> modelo_red <span class="sc">|&gt;</span> <span class="fu">fit</span>(</span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> x_grasa, <span class="at">y =</span> y_grasa,</span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">validation_data =</span> <span class="fu">list</span>(x_grasa_pr, y_grasa_pr),</span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">batch_size =</span> <span class="dv">30</span>, <span class="at">epochs =</span> <span class="dv">250</span>, <span class="at">verbose =</span> <span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Vemos que con esta red podemos alcanzar un error de entrenamiento cercano a cero, aún cuando vemos que sobreajusta al evaluar con la muestra de validación.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(historia, <span class="at">smooth =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-47-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Notamos que las predicciones no son muy buenas:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>preds <span class="ot">&lt;-</span> <span class="fu">predict</span>(modelo_red, x_grasa_pr) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>4/4 - 0s - 16ms/step</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>preds <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]
+[1,]  9.807081
+[2,] 20.581005
+[3,]  8.419558
+[4,]  8.987329
+[5,]  9.104197
+[6,]  8.516685</code></pre>
+</div>
+</div>
+<p>Y obtenemos el siguiente resultado:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>g_1 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">preds =</span> preds[, <span class="dv">1</span>], <span class="at">y =</span> y_grasa_pr) <span class="sc">|&gt;</span> </span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> preds, <span class="at">y =</span> y)) <span class="sc">+</span> </span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>, <span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_obs_pred</span>()</span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>g_1</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-49-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Podemos ahora experimentar con los parámetros del optimizador, número de unidades, número de capas y regularización L2.</p>
+<ul>
+<li>Cada cambio de número de unidades/capas o regularización requiere ajustes a la tasa de aprendizaje y otros parámetros del optimizador.</li>
+<li>Varias arquitecturas (número de capas y unidades) pueden dar resultados similares. En este caso, usualmente escogemos el modelo más computacionalmente simple, o dependiendo del tipo de errores de cada modelo.</li>
+<li>Recordamos que una consecuencia del sobreajuste es que el error de prueba es mayor que el de entrenamiento (hay un <em>gap</em> de generalización). Para mejorar el desempeño, podemos reducir el error de entrenamiento (reducir sesgo), y/o reducir sobreajuste (<em>gap</em> entre entrenamiento y prueba).</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>modelo_red_2 <span class="ot">&lt;-</span> <span class="fu">keras_model_sequential</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_dense</span>(<span class="at">units =</span> <span class="dv">30</span>, <span class="at">activation =</span> <span class="st">"sigmoid"</span>, </span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">kernel_regularizer =</span> <span class="fu">regularizer_l2</span>(<span class="fl">0.1</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_dense</span>(<span class="at">units =</span> <span class="dv">30</span>, <span class="at">activation =</span> <span class="st">"sigmoid"</span>,</span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">kernel_regularizer =</span> <span class="fu">regularizer_l2</span>(<span class="fl">0.1</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layer_dense</span>(<span class="at">units =</span> <span class="dv">1</span>, <span class="at">activation =</span> <span class="st">"linear"</span>, </span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">kernel_regularizer =</span> <span class="fu">regularizer_l2</span>(<span class="fl">0.01</span>))</span>
+<span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a>modelo_red_2 <span class="sc">|&gt;</span> <span class="fu">compile</span>(<span class="at">loss =</span> <span class="st">"mse"</span>,<span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"mse"</span>),</span>
+<span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">optimizer =</span> <span class="fu">optimizer_sgd</span>(<span class="at">learning_rate =</span> <span class="fl">0.0005</span>, <span class="at">momentum =</span> <span class="fl">0.95</span>)</span>
+<span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb67-11"><a href="#cb67-11" aria-hidden="true" tabindex="-1"></a>historia <span class="ot">&lt;-</span> modelo_red_2 <span class="sc">|&gt;</span> <span class="fu">fit</span>(</span>
+<span id="cb67-12"><a href="#cb67-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> x_grasa, <span class="at">y =</span> y_grasa,</span>
+<span id="cb67-13"><a href="#cb67-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">validation_data =</span> <span class="fu">list</span>(x_grasa_pr, y_grasa_pr),</span>
+<span id="cb67-14"><a href="#cb67-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">batch_size =</span> <span class="dv">30</span>, <span class="at">epochs =</span> <span class="dv">500</span>, <span class="at">verbose =</span> <span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(historia, <span class="at">smooth =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-51-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>La afinación nos da mejores resultados:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>preds_2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(modelo_red_2, x_grasa_pr) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>4/4 - 0s - 15ms/step</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>g_2 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">preds_2 =</span> preds_2[, <span class="dv">1</span>], <span class="at">y =</span> y_grasa_pr) <span class="sc">|&gt;</span> </span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> preds_2, <span class="at">y =</span> y)) <span class="sc">+</span> </span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>, <span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_obs_pred</span>()</span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>g_1 <span class="sc">+</span> g_2</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-redes-neuronales-1_files/figure-html/unnamed-chunk-52-1.png" class="img-fluid figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="resumen" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="resumen">Resumen</h3>
+<p><strong>Ejercicio</strong>: En nuestra referencia <em>The Deep Learning Book</em>, puedes revisar la sección 11.4.1 (afinación manual) y 11.4.2 (afinación por búsqueda automática). Explica qué efecto tienen sobre sesgo y sobreajuste los siguientes parámetros:</p>
+<ul>
+<li>Número de capas</li>
+<li>Número de unidades por capa oculta</li>
+<li>Regularización L2 de los pesos</li>
+<li>Tasa de aprendizaje (ojo, este parámetro es especial)</li>
+</ul>
+<p>En la parte 2 de redes neuronales veremos más estrategias de regularización, y cómo agregar estructura a redes adaptada a problemas particulares. Notamos para por el momento que las redes neuronales con solamente capas conexas no han sido particularmente exitosas para ningún problema particular. Típicamente requieren una gran cantidad de datos y entrenarlas es más difícil que otros métodos. Sin embargo, la historia es diferente cuando escogemos adecuadamente la arquitectura de la red para un problema dado, es decir, qué unidades están conectadas y bajo qué patrones. En estos casos, las conexiones pueden ser relativamente pocas comparadas con redes totalmente conexas con el mismo tamaño de unidades, y si la estructura es correcta, no incurrimos en mucho sesgo. Ejemplos son procesamiento de imágenes, audio, o lenguaje natural.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./05-regularizacion-1.html" class="pagination-link" aria-label="Regularización y variabilidad">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Regularización y variabilidad</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./99-referencias.html" class="pagination-link" aria-label="Referencias">
+        <span class="nav-page-text">Referencias</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
