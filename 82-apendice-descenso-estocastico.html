@@ -523,11 +523,9 @@ Descenso estocástico
 <li><p>Desde este punto de vista, calcular el gradiente completo para descenso en gradiente es computacionalmente ineficiente. Si el conjunto de entrenamiento es masivo, descenso en gradiente puede no ser factible.</p></li>
 <li><p>Desde el punto de vista de sobreajuste, el uso de distintos datos para cada paso <strong>evita mínimos sobreajustados o de bajo desempeño</strong> que están presentes en la pérdida calculada con todos los datos.</p></li>
 <li><p>¿Cuál es el mejor tamaño de minilote? Por un lado, minilotes más grandes nos dan mejores eficiencias en paralelización (multiplicación de matrices), especialmente en GPUs. Por otro lado, con minilotes más grandes puede ser que hagamos trabajo de más, por las razones expuestas en los incisos anteriores, y tengamos menos iteraciones en el mismo tiempo. El mejor punto está entre minilotes demasiado chicos (donde no aprovechamos paralelismo) o demasiado grande (donde hacemos demasiado trabajo por iteración).</p></li>
-</ol>
-<p>4.Una propiedad importante de descenso estocástico en minilotes es que <strong>su convergencia no depende del tamaño del conjunto de entrenamiento</strong>, es decir, el tiempo de iteración para descenso estocástico no crece con el número de casos totales. Podemos tener obtener buenos ajustes incluso con tamaños muy grandes de conjuntos de entrenamiento (por ejemplo, antes de procesar todos los datos de entrenamiento). Descenso estocástico <em>escala</em> bien en este sentido: el factor limitante es el tamaño de minilote y el número de iteraciones.</p>
-<ol start="5" type="1">
+<li><p>Una propiedad importante de descenso estocástico en minilotes es que <strong>su convergencia no depende del tamaño del conjunto de entrenamiento</strong>, es decir, el tiempo de iteración para descenso estocástico no crece con el número de casos totales. Podemos tener obtener buenos ajustes incluso con tamaños muy grandes de conjuntos de entrenamiento (por ejemplo, antes de procesar todos los datos de entrenamiento). Descenso estocástico <em>escala</em> bien en este sentido: el factor limitante es el tamaño de minilote y el número de iteraciones.</p></li>
 <li><p>Es importante <strong>permutar al azar</strong> los datos antes de hacer los minibatches, pues órdenes “naturales” en los datos pueden afectar la convergencia. Se ha observado también que permutar los minibatches en cada iteración típicamente acelera la convergencia (si se pueden tener los datos en memoria).</p></li>
-<li><p>La tasa de aprendizaje o tamaño de paso y el tamaño de minilote también influyen en el tipo de regularización que ocurre cuando aplicamos estos métodos para ajustar modelos, y es necesario ajustarlos considerando el desempeño en conjuntos de validación.</p></li>
+<li><p>La tasa de aprendizaje o tamaño de paso y el tamaño de minilote también influyen en el tipo de <strong>regularización</strong> que ocurre cuando aplicamos estos métodos para ajustar modelos, y es necesario ajustarlos considerando el desempeño en conjuntos de validación. Minilotes más chicos pueden reducir sobreajuste pero ser ruidosos (iteraciones no tan buenas), minilotes más grandes son menos ruidosos, inducen relativamente menos regularización, pero pueden ser más eficientes en términos de memoria/cómputo. Para estos efectos, el tamaño del minilote interactúa con la tasa de aprendizaje o tamaño de paso.</p></li>
 </ol>
 <section id="ejemplo" class="level4 unnumbered">
 <h4 class="unnumbered anchored" data-anchor-id="ejemplo">Ejemplo</h4>
@@ -835,12 +833,12 @@ Descenso estocástico con momento
 <div class="cell-output cell-output-stdout">
 <pre><code>[[1]]
             [,1]
-[1,] -2.48971248
-[2,]  0.04918201
-[3,]  0.16484587
+[1,] -2.49038863
+[2,] -0.09984824
+[3,]  0.09463287
 
 [[2]]
-[1] -0.4645409</code></pre>
+[1] -0.3137684</code></pre>
 </div>
 </div>
 <p>Y verificamos que concuerda con la salida de <em>lm</em>:</p>
