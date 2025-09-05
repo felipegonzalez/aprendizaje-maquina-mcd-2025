@@ -242,7 +242,7 @@ iteraciones en el mismo tiempo. El mejor punto está entre minilotes demasiado
 chicos (donde no aprovechamos paralelismo) o demasiado grande (donde hacemos demasiado trabajo
 por iteración).
 
-4.Una propiedad importante de descenso estocástico en minilotes es que **su convergencia no depende del tamaño del conjunto de entrenamiento**, es decir,
+5. Una propiedad importante de descenso estocástico en minilotes es que **su convergencia no depende del tamaño del conjunto de entrenamiento**, es decir,
 el tiempo de iteración para descenso estocástico
 no crece con el número de casos totales. Podemos tener obtener
 buenos ajustes
@@ -250,15 +250,18 @@ incluso con tamaños muy grandes de conjuntos de entrenamiento (por ejemplo, ant
 de procesar todos los datos de entrenamiento). Descenso estocástico *escala* bien
 en este sentido: el factor limitante es el tamaño de minilote y el número de iteraciones.
 
-5. Es importante **permutar al azar** los datos antes de hacer los minibatches,
+6. Es importante **permutar al azar** los datos antes de hacer los minibatches,
 pues órdenes "naturales" en los datos pueden afectar la convergencia. Se ha observado
 también que permutar los minibatches en cada iteración típicamente acelera
 la convergencia (si se pueden tener los datos en memoria).
 
-6. La tasa de aprendizaje o tamaño de paso y el tamaño de minilote también
-influyen en el tipo de regularización que ocurre cuando aplicamos estos
+7. La tasa de aprendizaje o tamaño de paso y el tamaño de minilote también
+influyen en el tipo de **regularización** que ocurre cuando aplicamos estos
 métodos para ajustar modelos, y es necesario ajustarlos considerando el
-desempeño en conjuntos de validación.
+desempeño en conjuntos de validación. Minilotes más chicos pueden reducir sobreajuste pero ser ruidosos (iteraciones no tan buenas), minilotes más grandes 
+son menos ruidosos, inducen relativamente menos regularización, pero pueden
+ser más eficientes en términos de memoria/cómputo. Para estos efectos, el
+tamaño del minilote interactúa con la tasa de aprendizaje o tamaño de paso.
 
 #### Ejemplo{-}
 En el ejemplo anterior nota que las direcciones de descenso de descenso estocástico
