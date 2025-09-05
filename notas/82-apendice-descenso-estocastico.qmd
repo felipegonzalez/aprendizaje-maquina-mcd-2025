@@ -154,7 +154,7 @@ ggplot(iteraciones_descenso, aes(x=beta_1, y=beta_2)) + geom_path() +
 
 Podemos comparar contando el tiempo por época:
 
-```{r, fig.width = 5, fig.height = 3, message = FALSE}
+```{r, fig.width = 5, fig.height = 3, out.width="400px", message = FALSE}
 library(gganimate)
 estocastico <- iter_estocastico
 descenso <- iteraciones_descenso
@@ -166,9 +166,10 @@ g_de <- ggplot(estocastico, aes(x = beta_1, y = beta_2)) +
   geom_path(data = descenso) +
   geom_point(data = descenso, size = 3) +
   transition_reveal(epoca) 
-animate(g_de, duration = 10)
+#animate(g_de, duration = 10) 
+#anim_save("figuras/comp_descenso.gif")
 ```
-
+![](figuras/comp_descenso.gif){width="400px"}
 
 
 Podemos ver cómo se ve la devianza de entrenamiento:
@@ -253,6 +254,11 @@ en este sentido: el factor limitante es el tamaño de minilote y el número de i
 pues órdenes "naturales" en los datos pueden afectar la convergencia. Se ha observado
 también que permutar los minibatches en cada iteración típicamente acelera
 la convergencia (si se pueden tener los datos en memoria).
+
+6. La tasa de aprendizaje o tamaño de paso y el tamaño de minilote también
+influyen en el tipo de regularización que ocurre cuando aplicamos estos
+métodos para ajustar modelos, y es necesario ajustarlos considerando el
+desempeño en conjuntos de validación.
 
 #### Ejemplo{-}
 En el ejemplo anterior nota que las direcciones de descenso de descenso estocástico
