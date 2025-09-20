@@ -1,0 +1,153 @@
+---
+title: "Tarea 6: clasificación y regresión logística"
+format: html
+---
+
+## Regresión logística y regularización
+
+Veremos un ejemplo simple de regresión logística para una sola variable de entrada. Recordamos que: 
+
+- la entrada $x$ es numérica, 
+- la respuesta $y$ toma los valores 0 o 1 (que codifican dos clases). 
+
+Revisa las notas para repasar la explicación de que nuestro objetivo es estimar la probabilidad
+
+$$p(x) = P(Y = 1|X = x)$$
+
+para cada $x$ posible. Si tenemos una estimación $p(x)=p_1(x)$ de esta probabilidad, entonces la estimación de $P(Y=0|X=x)$ está dada por $p_0(x) = 1 - p(x)$.
+
+En clase vimos como estimar estas probabilidades usando por ejemplo $k$ vecinos más cercanos. En **regresión logística** (veremos más detalles en clase) 
+usamos un modelo lineal con una transformación adicional:
+
+$$p(x) = h(a + bx)$$ donde
+
+-   $h$ es la función logística (para obtener valores entre 0 y 1),
+-   $a$ y $b$ son parámetros que queremos ajustar con una muestra de entrenamiento.
+
+También podemos escribir:
+
+$$p(x) = \frac{\exp(a + bx)}{1 + \exp(a+bx)}$$
+
+Considera los siguientes datos de entrenamiento donde queremos predecir la categoria $y$ en función de $x$ usando regresión logística:
+
+```{r}
+#| message: false
+library(tidyverse)
+library(ggrepel)
+datos_ent_tbl <- tibble(
+  x = c(-2, -2.5, -1, 1.5, 1.6, 2.7, 3, 3.5), 
+  y = c(0, 0, 0, 1, 0, 1, 1, 1)) |>
+  mutate(x = x - mean(x)) # centrar x
+ggplot(datos_ent_tbl, aes(x = x, y = y, colour = factor(y) )) +
+  geom_point()
+```
+
+En el caso de la regresión logística, bucamos minimizar la *pérdida logarítmica*, que
+está dada por
+
+$$L(y,p) = - y \log p - (1-y)\log (1-p).$$
+Como discutimos en clase, nota que si $y=1$ y $p$ es cercana a cero, entonces
+$L(y,p)$ toma un valor grande. Igualmente, si observamos $y=0$ y nuestra 
+$p$ es cerca a uno entonces también toma un valor grande. La pérdida logarítmica
+es chica cuando todas las $y$'s iguales a uno tienen $p$'s cercanas a 1, y todas
+las $y$'s iguales a 0 tienen $p$'s cercanas a 0. Abajo está una implementación 
+de la pérdida logarítmica:
+
+
+
+```{r}
+# Función logística
+h <- function(x){
+  1/(1 + exp(-x))
+  # o exp(x) / (1 + exp(x)), que es lo mismo
+}
+perdida_logaritmica <- function(p, y){
+  perdida_i <- ifelse(y == 1 , -log(p), -log(1 - p))
+  perdida <- mean(perdida_i)
+  # o equivalentemente y más eficiente:
+  # perdida <- - mean(y * log(p) + (1-y)*log(1-p))
+  perdida
+}
+```
+
+Las siguientes dos funciones auxiliares nos permiten calcular fácilmente probabilidades dadas los parámetros $a$ y $b$ y la entrada $x$, y calcular una función que dado el conjunto de entrenamiento, calcula la pérdida cuando recibe como entrada los parámetros (ver ejemplos abajo):
+
+```{r}
+evaluar_predictor <- function(x, params){
+  a = params[1]
+  b = params[2]
+  prob <- h(a + b * x)
+  tibble(x = x, p = prob)
+}
+calc_perdida_log <- function(datos){
+  # devuelve una función que sólo depende de parámetros
+  perdida_fun <- function(params){
+    resultado <- perdida_logaritmica(
+      p = evaluar_predictor(x = datos$x, params) |> pull(p),
+      y = datos$y)
+    resultado
+  }
+  perdida_fun
+}
+```
+
+En el siguiente código, podemos proponer coeficientes a y b de regresión logística y ver cómo ajusta el modelo
+
+```{r}
+a <- 0.5
+b <- 0.5
+# función de pérdida para los datos
+perdida_log_ent <- calc_perdida_log(datos_ent_tbl)
+# ahora podemos calcular la pérdida directamente
+perdida_log_ent(c(a, b))
+```
+
+Graficamos también el modelo $p(x) = h(a + bx)$, junto con la pérdida logarítmica que aporta cada dato de entrenamiento, y la pérdida promedio:
+
+```{r}
+a <- -1.7
+b <- 2.6
+valores_prob <- evaluar_predictor(x = seq(-5, 5, 0.01), params = c(a, b))
+datos_ent_tbl <- datos_ent_tbl |> 
+  mutate(evaluar_predictor(x, c(a,b))) |> 
+  mutate(perdida_log = ifelse(y == 1, - log(p), -log(1-p))) |> 
+  mutate(perdida_log = round(perdida_log, 3))
+ggplot(datos_ent_tbl, aes(x = x)) +
+  geom_point(aes(y = y, colour = factor(y))) +
+  geom_line(data = valores_prob, aes(y = p), linewidth = 1.2) +
+  geom_text_repel(aes(y = y, label = perdida_log), size = 3) +
+  labs(subtitle = "Los número en los puntos denotan cuánto aportan a la pérdida") +
+  labs(title = sprintf("Pérdida logarítmica promedio: %.5f", perdida_log_ent(c(a,b)))) +
+  xlim(-5, 5)
+```
+
+**Pregunta 1**: Experimenta cambiando los valores de a y b. Prueba valores negativos de a y b también, valores muy grandes de uno y de otro, etc. ¿Qué tipo de formas (curvas) puedes obtener con este modelo? ¿Puedes obtener por ejemplo un modelo que tenga su máximo de probabilidad en 0?
+
+**Pregunta 2**: En tus modelos, ¿cuándo las aportaciones de los datos individuales a la pérdida son grandes? ¿Cuándo son chicas?
+
+**Pregunta 3**: Cambiando los valores de a y b busca minimizar la pérdida logarítmica promedio. ¿Tu solución da probabilidades muy cercanas a 0 y 1 para todos los valores de $x$?
+
+Sugerencia: Puedes por ejemplo movimiento alternadamente a y b por una cantidad *no muy grande*, de manera que en cada movimiento la pérdida logarítmica decrezca.
+
+**Pregunta 4**: usando el siguiente código o algo similar, encuentra los valores óptimos. ¿Qué tan cercanos son a los valores que encontraste "manualmente" en la pregunta anterior? Puedes consultar la documentación para saber qué optimizador usa en este caso esta función:
+
+```{r}
+glm(y ~ x, datos_ent_tbl, family = "binomial")
+```
+
+Verifica que un optimizador genérico, para este problema, da la misma solución que la que vimos arriba, minimizando la pérdida logarítmica:
+
+```{r}
+optim(par = c(0, 0), fn = perdida_log_ent) |> 
+  keep_at(c("par", "value"))
+```
+
+## Regresión logística con varias entradas
+
+En general, para $p$ entradas, podemos definir nuestro modelo como:
+
+$$p(x) = h(a_0 + a_1 x_1 + a_2 x_2 + \cdots + a_px_p)$$ 
+
+**Pregunta 5** Para el caso $p=2$, muestra que este modelo es lineal en el sentido de que todas las posibles entradas que satisfacen por ejemplo $p(x_1, x_2) = 0.8$ está en una línea recta. Intenta hacer un dibujo (a mano) de cómo se verían las curvas de nivel de $p(x_1, x_2)$.
+
+En el caso general, los datos que toman una cierta probabilidad fija están en un hiperplano.
