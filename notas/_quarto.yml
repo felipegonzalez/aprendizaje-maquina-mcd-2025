@@ -17,6 +17,8 @@ book:
     - 09-val-cruzada.qmd
     - 10-arboles.qmd
     - 13-arboles-boosting.qmd
+    - 14-clasificacion-calibracion.qmd
+    - 15-intervalos-predictivos.qmd
   appendices:
     - 81-apendice-descenso.qmd
     - 82-apendice-descenso-estocastico.qmd
