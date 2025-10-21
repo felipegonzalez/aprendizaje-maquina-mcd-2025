@@ -1,0 +1,150 @@
+---
+title: "Concurso: regresión logistica"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+entrena_concurso <- read_csv("datos/hoteles-entrena.csv")
+prueba_concurso <- read_csv("datos/hoteles-prueba.csv")
+```
+
+
+```{r}
+#set.seed(123)
+#splits <- initial_split(entrena_concurso, strata = children)
+#hotel_entrena <- training(splits)
+set.seed(234)
+entrena_concurso <- entrena_concurso |> 
+  arrange(arrival_date)
+val_set <- initial_split(entrena_concurso, prop = 0.85)
+hoteles_ent <- training(val_set)
+hoteles_val <- testing(val_set)
+```
+
+## Exploración
+
+```{r}
+skimr::skim(hoteles_ent)
+```
+
+
+```{r}
+resumen <- hoteles_ent |> 
+  group_by(arrival_date, children, hotel) |> 
+  summarise(n = n()) |> 
+  group_by(arrival_date, hotel) |>
+  mutate(p_children = n / sum(n)) 
+ggplot(resumen |> filter(children == "children"), 
+       aes(x = arrival_date, y = p_children, colour = hotel)) +
+  geom_point() + facet_wrap(~ hotel, ncol = 1)
+resumen
+```
+
+En el tiempo, el procentaje de niños parece variar considerablemente. Julio y Agosto
+de 2016 no es tan similar a Julio y Agosto de 2017. Consideramos primero 
+el lead time de reservación y la tarifa.
+
+```{r}
+resumen_tarifa <- hoteles_ent |> 
+  mutate(tarifa_gpo = cut_number(average_daily_rate, 40)) |> 
+  group_by(tarifa_gpo) |> 
+  summarise(tarifa_media = mean(average_daily_rate),
+              prop_children = sum(children == "children") / n(), n = n())
+resumen_tarifa |> ggplot(aes(x = tarifa_media, y = prop_children)) +
+  geom_point()
+```
+
+
+```{r}
+resumen_lead <- hoteles_ent |> 
+  mutate(lead_gpo = cut_number(lead_time, 10)) |> 
+  group_by(lead_gpo) |> 
+  summarise(lead_media = mean(lead_time),
+              prop_children = sum(children == "children") / n(), n = n())
+resumen_lead|> ggplot(aes(x = lead_media, y = prop_children)) +
+  geom_point()
+```
+
+- No parece ser tan importante, aunque leads muy altos tienen proporciones
+relativamente bajas o altas de niños.
+
+
+
+## Modelo base
+
+
+```{r}
+lr_mod <- 
+  logistic_reg(penalty = 0.000001, mixture = 0.8) |> 
+  set_engine("glmnet")
+holidays <- c("AllSouls", "AshWednesday", "ChristmasEve", "Easter", 
+              "ChristmasDay", "GoodFriday", "NewYearsDay", "PalmSunday")
+lr_recipe <- 
+  recipe(children ~ ., data = hoteles_ent) |>
+  step_mutate(no_lead = as.numeric(lead_time == 0)) |> 
+  step_ns(lead_time, deg_free = 6) |> 
+  step_ns(average_daily_rate, deg_free = 6) |> 
+  step_ns(adults, deg_free = 4) |> 
+  step_mutate(diff_weekend = stays_in_weekend_nights - stays_in_week_nights) |> 
+  step_novel(agent, company, country, distribution_channel) |> 
+  step_unknown(agent, company) |> 
+  step_other(agent, company, country, threshold = 0.01) |> 
+  step_date(arrival_date) |>  
+  step_holiday(arrival_date, holidays = holidays) |>
+  #step_mutate(arrival_date_num = as.numeric(arrival_date)) |> 
+  #step_ns(arrival_date_num, deg_free = 5) |> 
+  step_rm(arrival_date) |> 
+  step_dummy(all_nominal_predictors()) |> 
+  step_interact( ~ starts_with("hotel"):starts_with("average_daily")) |> 
+  step_interact( ~ starts_with("hotel"):starts_with("adults")) |> 
+  step_interact(~ starts_with("market_segment"):starts_with("customer")) |> 
+  step_zv(all_predictors()) 
+```
+
+```{r}
+lr_workflow <- 
+  workflow() |> 
+  add_model(lr_mod) |> 
+  add_recipe(lr_recipe)
+#lr_reg_grid <- tibble(penalty = 10^seq(-4, -1, length.out = 30))
+#lr_res <- 
+#  lr_workflow %>% 
+#  tune_grid(val_set,
+#            grid = lr_reg_grid,
+#            control = control_grid(save_pred = TRUE),
+#            metrics = metric_set(roc_auc))
+#lr_res <- lr_workflow |> mn_log_loss()
+```
+
+```{r}
+#lr_res |> collect_metrics()
+```
+
+```{r}
+fitted <- fit(lr_workflow, hoteles_ent)
+```
+
+
+```{r}
+preds_1 <- predict(fitted, hoteles_ent, type = "prob") |>
+  bind_cols(hoteles_ent)
+preds_1 |> mutate(children = factor(children)) |> 
+  mn_log_loss(children, .pred_children)
+preds_1 <- predict(fitted, hoteles_val, type = "prob") |>
+  bind_cols(hoteles_val)
+preds_1 |> mutate(children = factor(children)) |> 
+  mn_log_loss(children, .pred_children)
+
+```
+
+
+```{r}
+submission <- predict(fitted, prueba_concurso, type = "prob") |> 
+  bind_cols(prueba_concurso |> select(id)) |> 
+  select(id, prob = .pred_children)
+```
+
+
+
