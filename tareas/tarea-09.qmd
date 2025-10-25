@@ -1,0 +1,134 @@
+---
+title: "Tarea 9: predicción conforme"
+format: html
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+En esta tarea demostramos cómo funcionan y algunos detalles de los intervalos
+predictivos conformes que vimos en clase:
+
+El algoritmo que vimos en clase es como sigue:
+
+1. Construimos con datos de entrenamiento 
+
+$$L = (x^{(1)},  y^{(1)}), \ldots, (x^{(N)},  y^{(N)})$$
+
+un predictor $\hat{f}(x)$ (usando **cualquier método**).
+
+2. Usamos una muestra de calibración separada
+$$C = (\mathbf{x}_1,  \mathbf{y}_1), \ldots, (\mathbf{x}_n,  \mathbf{y}_n)$$
+y calculamos los residuales absolutos
+
+$${r}_i = |\mathbf{y}_i - \hat{f}(\mathbf{x}_i)|$$
+
+
+3. Para intervalos de cobertura $1-\alpha$, calculamos el cuantil $q$ al nivel $1-\alpha$ de los residuales absolutos $\mathbf{r}_1, \ldots, \mathbf{r}_n$.
+4. Si $(\mathbf{x}, \mathbf{y})$ es una nueva observación, 
+construimos un intervalo con la predicción $\hat{f}(\mathbf{x})$ como sigue:
+
+$$I(\mathbf{x}) =[\hat{f}(\mathbf{x})-  q, \hat{f}(\mathbf{x})+ q]$$
+
+En esta tarea **buscamos demostrar** que: Para cualquier algoritmo, conjunto de entrenamiento
+$\alpha$ y tamaño de muestra de calibración $n$,
+
+$$P(\mathbf{y} \in I(\mathbf{x}))\geq 1-\alpha$$
+Es decir, el intervalo cubre al verdadero valor $\mathbf{y}$ con probabilidad
+de al menos $1-\alpha$ (después veremos que de hecho es casi igual a $1-\alpha$). Es un intervalo de probabilidad **exacto** en este sentido.
+
+
+## Paso 1
+
+Primero vamos a precisar el cálculo del cuantil q. 
+Buscamos el la observación $r_j$ de las r's que está aproximadamente
+por encima de 90% del resto de las r's.
+
+En este caso, comenzamos tomando el valor $j$-ésimo de los residuales $\mathbf{r}_i$, donde $j = \lceil n(1-\alpha) \rceil$.
+
+Por ejemplo:
+
+```{r}
+set.seed(60)
+n <- 24
+r <- rexp(n, 10)
+r_ordenado <- sort(r)
+#r's ordenadas
+r_ordenado
+# el valor que buscamos es:
+j <- ceiling(n*0.90)
+cat("Cuantil 90%: ", r_ordenado[j] )
+```
+
+## Paso 2
+
+Consideramos ahora la muestra de residuales extendida con nuestro nuevo residual:
+
+$$r_1, r_2, \ldots, r_{n+1}$$
+
+donde definimos 
+$${r}_{n+1} = r = |\mathbf{y} - \hat{f}(\mathbf{x})|$$
+
+que es el residual correspondiente al punto donde queremos hacer la predicción.
+
+Como $r_1, r_2, \ldots, r_{n+1}$ es también una muestra iid (todas extraídas de la distribución de $(X,Y)$),
+¿dónde puede caer $r_{n+1}$ en relación a $r_1, r_2, \ldots, r_{n+1}$?
+
+**Pregunta 1**: Argumenta que si las r's son una muestra independente e idénticamente distribuida, entonces es igualmente probable que 
+$r_{n+1}$ sea el valor más chico, el segundo más chico, etc.
+Es decir, en la muestra ordenada, toma cualquier posición con igual probabilidad.
+
+Puedes argumentarlo de varias maneras: por ejemplo usando simetría, por contradicción, o empezando con casos simples: por ejemplo, ¿cuánto vale $P(r_i > r_j)$ para $i$ y $j$ distintas?
+
+
+## Paso 3
+
+Usando el paso anterior, si dibujamos los datos originales de calibración $r_1,\dots,r_n$, es igualmente probable que $r_{n+1}$
+caiga en cualquiera de los $n+1$ intervalos creados por los puntos 
+$r_1,\dots,r_n$ de la muestra de calibración (haz un dibujo, y recuerda que los
+r_i's no están ordenados).
+
+Así que la probabilidad de que el residual $r_{n+1}$ caiga en cualquiera de esos intervalos es 1/(n+1).
+
+Recuerda ahora que para que $\mathbf{y}$ esté en nuestro intervalo $I(\mathbf{x})$, entonces, por definición, $r_{n+1}$ tiene caer en uno
+de los $\lceil n(1-\alpha) \rceil$ que están a la izquierda del cuantil $q$ que definimos. Sumando obtenemos que la probabilidad es igual a  (cuenta los intervalos)
+
+$$P(\mathbf{y}\in I(\mathbf{x})) = \frac{\lceil n(1-\alpha)\rceil}{n+1}$$
+**Pregunta 2**: Argumenta (usando propiedades de la función techo) 
+que esta cantidad es mayor o igual a 
+$$\frac{n}{n+1} (1-\alpha) $$
+Aunque es un poco más chico de lo que necesitamos,
+si $n$ es grande entonces la diferencia no es importante, esta cantidad
+es aproximadamente $(1-\alpha)$
+
+## Paso 4
+
+Para asegurar el nivel de cobertura, podemos tomar el 
+cuantil $\frac{\lceil{(n+1)(1-\alpha)}\rceil}{n+1}$.
+
+**Pregunta 3**: revisa el paso 3 para verificar que en este caso, obtenemos
+la desigualdad que queríamos demostrar.
+
+
+## Paso 5
+
+Finalmente, podemos ver qué tan cerca la desigualdad está de la igualdad.
+Opcionalmente, demuestra que la cota que encontramos es ajustada en el sentido de que:
+
+$$
+1-\alpha + \frac{1}{n+1} \geq P(\mathbf{y} \in I(\mathbf{x}))\geq 1-\alpha
+$$
+
+
+
+**Pregunta 4**: ¿Por qué este argumento no funciona si usamos los
+datos de entrenamiento (incluso suponiendo que son una muestra iid)? 
+¿Qué dependencia hay entre los residuales calculados con la
+muestra de entrenamiento? 
+
+
+
+
+
