@@ -21,6 +21,7 @@ book:
     - 15-intervalos-predictivos.qmd
     - 16-interpretacion.qmd
     - 17-validacion-problemas.qmd
+    - 18-reduccion-dim.qmd
   appendices:
     - 81-apendice-descenso.qmd
     - 82-apendice-descenso-estocastico.qmd
