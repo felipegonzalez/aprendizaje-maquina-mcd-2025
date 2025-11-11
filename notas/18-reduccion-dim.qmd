@@ -1028,13 +1028,7 @@ fue descomposición en valores singulares).
 
 ```{r}
 ruta <- "../datos/netflix/dat_muestra_nflix.csv"
-url <- "https://s3.amazonaws.com/ma-netflix/dat_muestra_nflix.csv"
-if(!file.exists(ruta)){
-    evals_tbl <- read_csv(url, col_types = "iii")
-    write_csv(evals_tbl, ruta)
-} else {
-  evals_tbl <- read_csv(ruta, col_types = "iii")
-}
+evals_tbl <- read_csv(ruta, col_types = "iii")
 evals_tbl
 ```
 
@@ -1069,12 +1063,11 @@ if(TRUE){
 svd_parcial$d
 ```
 
-```{r}
-#no correr en notas
-V_peliculas <- svd_parcial$v |> as_tibble(.name_repair = NULL) |>
+```{r, warning = FALSE, message=FALSE}
+V_peliculas <- svd_parcial$v |> as_tibble() |>
     mutate(peli_id = row_number()) |> 
     left_join(peliculas_nombres |> mutate(pelicula_id = peli_id))
-U_usuarios <- svd_parcial$u |> as_tibble(.name_repair = NULL)
+U_usuarios <- svd_parcial$u |> as_tibble()
 ```
 
 Examinamos la primera y segunda componente en los pesos de las películas $V$:
