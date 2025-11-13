@@ -494,14 +494,10 @@ $$\sum_j X_{i,j}v_j =  \sigma u_i,$$
 $$\sum_i X_{i,j}u_i =\sigma  v_j,$$
 O en forma matricial 
 
-$$
-Xv = \sigma u
-$$ {#eq-valor-propio-derecho}
+$$Xv = \sigma u$$ {#eq-vector-propio-derecho}
 
 
-$$
-u^t X= \sigma v^t.
-$$ {#eq-valor-propio-izquierdo}
+$$u^t X= \sigma v^t.$$ {#eq-vector-propio-izquierdo}
 
 Podemos resolver este par de ecuaciones para encontrar la solución al problema
 de optimización de arriba. Este problema tiene varias soluciones (con distintas $\sigma$), 
@@ -531,9 +527,9 @@ Si $(u,v)$ son vectores propios de $X$ asociados a $\sigma$, entonces
 
 **Observaciones**:
 
-- La demostración es fácil pues aplicando $X^t$ a ambos lados de (@eq-valor-propio-derecho), obtenemos
+- La demostración es fácil pues aplicando $X^t$ a ambos lados de (@eq-vector-propio-derecho), obtenemos
 $X^t X v= \sigma X^t u$, que implica $(X^t X) v= \sigma (u^tX)^t = \sigma^2 v$. Podemos
-hacer lo mismo para (@eq-valor-propio-izquierdo).
+hacer lo mismo para (@eq-vector-propio-izquierdo).
 
 - Nótese que $X^tX$ es una matriz simétrica. Por el teorema espectral, existe una base
 ortogonal de vectores propios (usual) $v_1, v_2, \ldots, v_p$ con valores propios
@@ -605,7 +601,7 @@ a la cantidad $\mathrm{Tr} (XX^t)$ está dada por
 $$\mathrm{Tr} (XX^t) = ||X||_F^2 = \sum_{i,j} X_{i,j}^2,$$
 que es una medida del "tamaño" de la matriz $X$.
 
-## Interpetación de vectores singulares
+## Interpetación de vectores propios
 
 El resultado de arriba nos da una primera forma de interpretar las aproximaciones
 de rango uno. Nótese que por el argumento de arriba, tenemos que
@@ -624,15 +620,16 @@ De aquí, vemos que la matriz de proyecciones de los puntos originales sobre $v$
 $$\sigma uv^t$$
 
 ::: callout-note
-# Resumen de vectores singulares
+# Resumen de vectores propios
 
-Si $u$ y $v$ son vectores singulares de $X$, entonces
+Si $u$ y $v$ son vectores propios derecho e izquierdo de $X$, 
+con valor singular $\sigma$, entonces
 
 - El vector $\sigma u$ nos da las variables ponderadas de $X$ por los pesos de las variables $v$
 
 - La matriz de proyecciones de los renglones de $X$ sobre el vector $v$ es $\sigma uv^t$
 
-- Si escogemos el par $u,v$ de vectores propios con la $\sigma$ más grande posible, entonces el vector $v$ es la dirección tal que las proyecciones de los reglones de $X$ sobre $v$ son lo más cercanas posibles a los renglones originales $x_i$
+- Si escogemos el par $u,v$ de vectores propios con el valor singular $\sigma$ más grande posible, entonces el vector $v$ es la dirección tal que las proyecciones de los reglones de $X$ sobre $v$ son lo más cercanas posibles a los renglones originales $x_i$
 :::
 
 
