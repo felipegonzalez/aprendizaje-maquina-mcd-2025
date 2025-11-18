@@ -1,0 +1,1 @@
+noticias_w2v.txt filter=lfs diff=lfs merge=lfs -text
