@@ -64,7 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./81-apendice-descenso.html" rel="next">
+<link href="./20-recom-factorizacion.html" rel="next">
 <link href="./17-validacion-problemas.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -271,6 +271,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Aprendizaje no supervisado: reducción de dimensionalidad</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-recom-factorizacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Dimensiones latentes: embeddings</span></span></a>
+  </div>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
@@ -327,7 +333,7 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#discusión-aproximación-de-rango-1." id="toc-discusión-aproximación-de-rango-1." class="nav-link" data-scroll-target="#discusión-aproximación-de-rango-1."><span class="header-section-number">16.4.1</span> Discusión: aproximación de rango 1.</a></li>
   </ul></li>
-  <li><a href="#interpetación-de-vectores-singulares" id="toc-interpetación-de-vectores-singulares" class="nav-link" data-scroll-target="#interpetación-de-vectores-singulares"><span class="header-section-number">16.5</span> Interpetación de vectores singulares</a>
+  <li><a href="#interpetación-de-vectores-propios" id="toc-interpetación-de-vectores-propios" class="nav-link" data-scroll-target="#interpetación-de-vectores-propios"><span class="header-section-number">16.5</span> Interpetación de vectores propios</a>
   <ul class="collapse">
   <li><a href="#ejemplo-2" id="toc-ejemplo-2" class="nav-link" data-scroll-target="#ejemplo-2">Ejemplo</a></li>
   <li><a href="#discusión-aproximaciones-de-rango-más-alto" id="toc-discusión-aproximaciones-de-rango-más-alto" class="nav-link" data-scroll-target="#discusión-aproximaciones-de-rango-más-alto"><span class="header-section-number">16.5.1</span> Discusión: aproximaciones de rango más alto</a></li>
@@ -930,12 +936,8 @@ Adicionalmente, las dimensiones encontradas pueden mostrar patrones interesantes
 <p>El objetivo que queremos minimizar es <span class="math display">\[\sum_{i,j} (X_{i,j} - \sigma u_iv_j)^2\]</span></p>
 <p>Derivando con respecto a <span class="math inline">\(u_i\)</span> y <span class="math inline">\(v_j\)</span>, e igualando a cero, obtenemos (la sigma podemos quitarla en la derivada, pues multiplica todo el lado derecho):</p>
 <p><span class="math display">\[\frac{\partial}{\partial u_i} = -2\sigma\sum_{j} (X_{i,j} - \sigma u_iv_j)v_j = 0\]</span> <span class="math display">\[\frac{\partial}{\partial v_j} = -2\sigma\sum_{i} (X_{i,j} - \sigma u_iv_j)u_i = 0\]</span> Que simplificando (y usando que la norma de <span class="math inline">\(u\)</span> y <span class="math inline">\(v\)</span> es igual a 1: <span class="math inline">\(\sum_iu_i^2 = \sum_j v_j^2=1\)</span>) quedan: <span class="math display">\[\sum_j X_{i,j}v_j =  \sigma u_i,\]</span> <span class="math display">\[\sum_i X_{i,j}u_i =\sigma  v_j,\]</span> O en forma matricial</p>
-<p><span id="eq-valor-propio-derecho"><span class="math display">\[
-Xv = \sigma u
-\tag{16.1}\]</span></span></p>
-<p><span id="eq-valor-propio-izquierdo"><span class="math display">\[
-u^t X= \sigma v^t.
-\tag{16.2}\]</span></span></p>
+<p><span id="eq-vector-propio-derecho"><span class="math display">\[Xv = \sigma u \tag{16.1}\]</span></span></p>
+<p><span id="eq-vector-propio-izquierdo"><span class="math display">\[u^t X= \sigma v^t. \tag{16.2}\]</span></span></p>
 <p>Podemos resolver este par de ecuaciones para encontrar la solución al problema de optimización de arriba. Este problema tiene varias soluciones (con distintas <span class="math inline">\(\sigma\)</span>), pero veremos cómo podemos escoger la que de mejor la aproximación (adelanto: escoger las solución con <span class="math inline">\(\sigma^2\)</span> más grande).</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -970,7 +972,7 @@ Tip
 </div>
 <p><strong>Observaciones</strong>:</p>
 <ul>
-<li><p>La demostración es fácil pues aplicando <span class="math inline">\(X^t\)</span> a ambos lados de (<a href="#eq-valor-propio-derecho" class="quarto-xref">Ecuación&nbsp;<span>16.1</span></a>), obtenemos <span class="math inline">\(X^t X v= \sigma X^t u\)</span>, que implica <span class="math inline">\((X^t X) v= \sigma (u^tX)^t = \sigma^2 v\)</span>. Podemos hacer lo mismo para (<a href="#eq-valor-propio-izquierdo" class="quarto-xref">Ecuación&nbsp;<span>16.2</span></a>).</p></li>
+<li><p>La demostración es fácil pues aplicando <span class="math inline">\(X^t\)</span> a ambos lados de (<a href="#eq-vector-propio-derecho" class="quarto-xref">Ecuación&nbsp;<span>16.1</span></a>), obtenemos <span class="math inline">\(X^t X v= \sigma X^t u\)</span>, que implica <span class="math inline">\((X^t X) v= \sigma (u^tX)^t = \sigma^2 v\)</span>. Podemos hacer lo mismo para (<a href="#eq-vector-propio-izquierdo" class="quarto-xref">Ecuación&nbsp;<span>16.2</span></a>).</p></li>
 <li><p>Nótese que <span class="math inline">\(X^tX\)</span> es una matriz simétrica. Por el teorema espectral, existe una base ortogonal de vectores propios (usual) <span class="math inline">\(v_1, v_2, \ldots, v_p\)</span> con valores propios reales. Adicionalmente, como <span class="math inline">\(X^tX\)</span> es positivo-definida, entonces todos estos vectores propios tienen valor propio no negativos.</p></li>
 </ul>
 <section id="ejemplo-1" class="level4 unnumbered">
@@ -1040,8 +1042,8 @@ Private Education   123.4799</code></pre>
 </section>
 </section>
 </section>
-<section id="interpetación-de-vectores-singulares" class="level2" data-number="16.5">
-<h2 data-number="16.5" class="anchored" data-anchor-id="interpetación-de-vectores-singulares"><span class="header-section-number">16.5</span> Interpetación de vectores singulares</h2>
+<section id="interpetación-de-vectores-propios" class="level2" data-number="16.5">
+<h2 data-number="16.5" class="anchored" data-anchor-id="interpetación-de-vectores-propios"><span class="header-section-number">16.5</span> Interpetación de vectores propios</h2>
 <p>El resultado de arriba nos da una primera forma de interpretar las aproximaciones de rango uno. Nótese que por el argumento de arriba, tenemos que</p>
 <p><span class="math display">\[Xv = \sigma u\]</span> Y consideremos el lado izquierdo de esta ecuación: <span class="math inline">\(Xv\)</span> son las variables originales de <span class="math inline">\(X\)</span> ponderadas por los pesos del vector <span class="math inline">\(v\)</span>, de forma que <span class="math inline">\(Xv\)</span> nos da una nueva variable derivada que combina linealmente las variables originales. Las proyecciones de los reglones o casos <span class="math inline">\(x_i\)</span> de <span class="math inline">\(X\)</span> podemos escribirlas también como (suponiendo <span class="math inline">\(v\)</span> de norma 1):</p>
 <p><span class="math display">\[(x_i\cdot v) v= \sigma u_iv\]</span> y su componente <span class="math inline">\(j\)</span> es</p>
@@ -1052,15 +1054,15 @@ Private Education   123.4799</code></pre>
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Resumen de vectores singulares
+Resumen de vectores propios
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Si <span class="math inline">\(u\)</span> y <span class="math inline">\(v\)</span> son vectores singulares de <span class="math inline">\(X\)</span>, entonces</p>
+<p>Si <span class="math inline">\(u\)</span> y <span class="math inline">\(v\)</span> son vectores propios derecho e izquierdo de <span class="math inline">\(X\)</span>, con valor singular <span class="math inline">\(\sigma\)</span>, entonces</p>
 <ul>
 <li><p>El vector <span class="math inline">\(\sigma u\)</span> nos da las variables ponderadas de <span class="math inline">\(X\)</span> por los pesos de las variables <span class="math inline">\(v\)</span></p></li>
 <li><p>La matriz de proyecciones de los renglones de <span class="math inline">\(X\)</span> sobre el vector <span class="math inline">\(v\)</span> es <span class="math inline">\(\sigma uv^t\)</span></p></li>
-<li><p>Si escogemos el par <span class="math inline">\(u,v\)</span> de vectores propios con la <span class="math inline">\(\sigma\)</span> más grande posible, entonces el vector <span class="math inline">\(v\)</span> es la dirección tal que las proyecciones de los reglones de <span class="math inline">\(X\)</span> sobre <span class="math inline">\(v\)</span> son lo más cercanas posibles a los renglones originales <span class="math inline">\(x_i\)</span></p></li>
+<li><p>Si escogemos el par <span class="math inline">\(u,v\)</span> de vectores propios con el valor singular <span class="math inline">\(\sigma\)</span> más grande posible, entonces el vector <span class="math inline">\(v\)</span> es la dirección tal que las proyecciones de los reglones de <span class="math inline">\(X\)</span> sobre <span class="math inline">\(v\)</span> son lo más cercanas posibles a los renglones originales <span class="math inline">\(x_i\)</span></p></li>
 </ul>
 </div>
 </div>
@@ -2528,8 +2530,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./81-apendice-descenso.html" class="pagination-link" aria-label="Apéndice 1: descenso en gradiente">
-        <span class="nav-page-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Apéndice 1: descenso en gradiente</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./20-recom-factorizacion.html" class="pagination-link" aria-label="Dimensiones latentes: embeddings">
+        <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Dimensiones latentes: embeddings</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
