@@ -263,6 +263,31 @@ Este método está implementado en [spark](https://spark.apache.org/docs/3.0.0/m
 es diferente en spark, ver [el código](https://github.com/apache/spark/blob/v3.0.0/mllib/src/main/scala/org/apache/spark/ml/recommendation/ALS.scala), donde cada renglón se inicializa con
 un vector de $N(0,1)$ normalizado.
 
+
+### Modelos neuronales para recomendación
+
+En principo, podemos escribir el problema de factorización de matrices
+de arriba en términos de una red neuronal con dos embeddings: una
+matriz $V$ de usuarios y una matriz $V$ de películas, ambas con el mismo número
+de columnas. La red neuronal tiene entradas $(i,j)$ (usuario $i$ y película $j$),
+y la primera capa devuelve dos columnas $U_i$ y $V_j$. La última capa
+calcula el producto punto de estos dos vectores $<U_i, V_j>$, que es la predicción
+de $X_{i,j}$. Estas red puede entrenarse usando descenso en gradiente estocástico.
+
+Esta idea puede generalizarse para permitir usar características de los 
+usuarios (lenguaje, edad, género), ver por ejemplo
+ [aquí](https://developers.google.com/machine-learning/recommendation/dnn/softmax).
+
+
+
+
+
+
+
+
+
+
+
 ## Búsqueda por similitud y Hashing
 
 Cuando tenemos las representaciones de personas/artículos, muchas veces
