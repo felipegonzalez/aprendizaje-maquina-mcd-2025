@@ -346,6 +346,7 @@ window.Quarto = {
   <li><a href="#mínimos-cuadrados-alternados" id="toc-mínimos-cuadrados-alternados" class="nav-link" data-scroll-target="#mínimos-cuadrados-alternados"><span class="header-section-number">17.3</span> Mínimos cuadrados alternados</a>
   <ul class="collapse">
   <li><a href="#mínimos-cuadrados-alternados-con-regularización" id="toc-mínimos-cuadrados-alternados-con-regularización" class="nav-link" data-scroll-target="#mínimos-cuadrados-alternados-con-regularización"><span class="header-section-number">17.3.1</span> Mínimos cuadrados alternados con regularización</a></li>
+  <li><a href="#modelos-neuronales-para-recomendación" id="toc-modelos-neuronales-para-recomendación" class="nav-link" data-scroll-target="#modelos-neuronales-para-recomendación"><span class="header-section-number">17.3.2</span> Modelos neuronales para recomendación</a></li>
   </ul></li>
   <li><a href="#búsqueda-por-similitud-y-hashing" id="toc-búsqueda-por-similitud-y-hashing" class="nav-link" data-scroll-target="#búsqueda-por-similitud-y-hashing"><span class="header-section-number">17.4</span> Búsqueda por similitud y Hashing</a></li>
   <li><a href="#retroalimentación-implícita" id="toc-retroalimentación-implícita" class="nav-link" data-scroll-target="#retroalimentación-implícita"><span class="header-section-number">17.5</span> Retroalimentación implícita</a>
@@ -583,6 +584,11 @@ X \approx UV^t
 </ul>
 <p>Este método está implementado en <a href="https://spark.apache.org/docs/3.0.0/mllib-collaborative-filtering.html">spark</a>. La implementación está basada parcialmente en <span class="citation" data-cites="alsreg">(<a href="99-referencias.html#ref-alsreg" role="doc-biblioref">Zhou et&nbsp;al. 2008</a>)</span>. La inicialización es diferente en spark, ver <a href="https://github.com/apache/spark/blob/v3.0.0/mllib/src/main/scala/org/apache/spark/ml/recommendation/ALS.scala">el código</a>, donde cada renglón se inicializa con un vector de <span class="math inline">\(N(0,1)\)</span> normalizado.</p>
 </section>
+<section id="modelos-neuronales-para-recomendación" class="level3" data-number="17.3.2">
+<h3 data-number="17.3.2" class="anchored" data-anchor-id="modelos-neuronales-para-recomendación"><span class="header-section-number">17.3.2</span> Modelos neuronales para recomendación</h3>
+<p>En principo, podemos escribir el problema de factorización de matrices de arriba en términos de una red neuronal con dos embeddings: una matriz <span class="math inline">\(V\)</span> de usuarios y una matriz <span class="math inline">\(V\)</span> de películas, ambas con el mismo número de columnas. La red neuronal tiene entradas <span class="math inline">\((i,j)\)</span> (usuario <span class="math inline">\(i\)</span> y película <span class="math inline">\(j\)</span>), y la primera capa devuelve dos columnas <span class="math inline">\(U_i\)</span> y <span class="math inline">\(V_j\)</span>. La última capa calcula el producto punto de estos dos vectores <span class="math inline">\(&lt;U_i, V_j&gt;\)</span>, que es la predicción de <span class="math inline">\(X_{i,j}\)</span>. Estas red puede entrenarse usando descenso en gradiente estocástico.</p>
+<p>Esta idea puede generalizarse para permitir usar características de los usuarios (lenguaje, edad, género), ver por ejemplo <a href="https://developers.google.com/machine-learning/recommendation/dnn/softmax">aquí</a>.</p>
+</section>
 </section>
 <section id="búsqueda-por-similitud-y-hashing" class="level2" data-number="17.4">
 <h2 data-number="17.4" class="anchored" data-anchor-id="búsqueda-por-similitud-y-hashing"><span class="header-section-number">17.4</span> Búsqueda por similitud y Hashing</h2>
@@ -675,7 +681,7 @@ X \approx UV^t
 <span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.027   0.000   0.027 </code></pre>
+  0.025   0.000   0.026 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>pares_tbl <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1116,44 +1122,39 @@ Attaching package: 'keras3'</code></pre>
 <pre><code>Downloading data from https://storage.googleapis.com/tensorflow/keras-applications/vgg16/vgg16_weights_tf_dim_ordering_tf_kernels.h5
 
 [1m        0/553467096[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 0s/step
-[1m  2473984/553467096[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m11s[0m 0us/step
-[1m 10125312/553467096[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m5s[0m 0us/step 
-[1m 29425664/553467096[0m [32m━[0m[37m━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 0us/step
-[1m 46047232/553467096[0m [32m━[0m[37m━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 0us/step
-[1m 57171968/553467096[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 0us/step
-[1m 75161600/553467096[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
-[1m 93962240/553467096[0m [32m━━━[0m[37m━━━━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
-[1m111984640/553467096[0m [32m━━━━[0m[37m━━━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
-[1m128303104/553467096[0m [32m━━━━[0m[37m━━━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
-[1m140468224/553467096[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
-[1m156213248/553467096[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
-[1m172572672/553467096[0m [32m━━━━━━[0m[37m━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
-[1m187441152/553467096[0m [32m━━━━━━[0m[37m━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
-[1m205815808/553467096[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
-[1m223289344/553467096[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m1s[0m 0us/step
-[1m233308160/553467096[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m1s[0m 0us/step
-[1m243179520/553467096[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m1s[0m 0us/step
-[1m259424256/553467096[0m [32m━━━━━━━━━[0m[37m━━━━━━━━━━━[0m [1m1s[0m 0us/step
-[1m277831680/553467096[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 0us/step
-[1m290365440/553467096[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 0us/step
-[1m306388992/553467096[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 0us/step
-[1m322183168/553467096[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 0us/step
-[1m336896000/553467096[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 0us/step
-[1m352722944/553467096[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 0us/step
-[1m367763456/553467096[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 0us/step
-[1m373039104/553467096[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 0us/step
-[1m388554752/553467096[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 0us/step
-[1m404922368/553467096[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 0us/step
-[1m419864576/553467096[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 0us/step
-[1m436068352/553467096[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 0us/step
-[1m453279744/553467096[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 0us/step
-[1m466345984/553467096[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 0us/step
-[1m480256000/553467096[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 0us/step
-[1m494116864/553467096[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 0us/step
-[1m507600896/553467096[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 0us/step
-[1m521510912/553467096[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 0us/step
-[1m535371776/553467096[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 0us/step
-[1m547119104/553467096[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 0us/step
+[1m  3940352/553467096[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m9s[0m 0us/step
+[1m 21659648/553467096[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 0us/step
+[1m 40116224/553467096[0m [32m━[0m[37m━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 0us/step
+[1m 57548800/553467096[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
+[1m 74891264/553467096[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
+[1m 87179264/553467096[0m [32m━━━[0m[37m━━━━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
+[1m103923712/553467096[0m [32m━━━[0m[37m━━━━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
+[1m122191872/553467096[0m [32m━━━━[0m[37m━━━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
+[1m140427264/553467096[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
+[1m159055872/553467096[0m [32m━━━━━[0m[37m━━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
+[1m167518208/553467096[0m [32m━━━━━━[0m[37m━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
+[1m182321152/553467096[0m [32m━━━━━━[0m[37m━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
+[1m201203712/553467096[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
+[1m219095040/553467096[0m [32m━━━━━━━[0m[37m━━━━━━━━━━━━━[0m [1m1s[0m 0us/step
+[1m237330432/553467096[0m [32m━━━━━━━━[0m[37m━━━━━━━━━━━━[0m [1m1s[0m 0us/step
+[1m256180224/553467096[0m [32m━━━━━━━━━[0m[37m━━━━━━━━━━━[0m [1m1s[0m 0us/step
+[1m274325504/553467096[0m [32m━━━━━━━━━[0m[37m━━━━━━━━━━━[0m [1m0s[0m 0us/step
+[1m292839424/553467096[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 0us/step
+[1m310214656/553467096[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 0us/step
+[1m328409088/553467096[0m [32m━━━━━━━━━━━[0m[37m━━━━━━━━━[0m [1m0s[0m 0us/step
+[1m346832896/553467096[0m [32m━━━━━━━━━━━━[0m[37m━━━━━━━━[0m [1m0s[0m 0us/step
+[1m364937216/553467096[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 0us/step
+[1m382803968/553467096[0m [32m━━━━━━━━━━━━━[0m[37m━━━━━━━[0m [1m0s[0m 0us/step
+[1m400646144/553467096[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 0us/step
+[1m418504704/553467096[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 0us/step
+[1m436699136/553467096[0m [32m━━━━━━━━━━━━━━━[0m[37m━━━━━[0m [1m0s[0m 0us/step
+[1m455303168/553467096[0m [32m━━━━━━━━━━━━━━━━[0m[37m━━━━[0m [1m0s[0m 0us/step
+[1m473456640/553467096[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 0us/step
+[1m491339776/553467096[0m [32m━━━━━━━━━━━━━━━━━[0m[37m━━━[0m [1m0s[0m 0us/step
+[1m507453440/553467096[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 0us/step
+[1m519610368/553467096[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 0us/step
+[1m532258816/553467096[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 0us/step
+[1m543268864/553467096[0m [32m━━━━━━━━━━━━━━━━━━━[0m[37m━[0m [1m0s[0m 0us/step
 [1m553467096/553467096[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m2s[0m 0us/step</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="co"># obtener la penúltima</span></span>
@@ -1250,7 +1251,7 @@ Attaching package: 'keras3'</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>features_2 <span class="ot">&lt;-</span> <span class="fu">calcular_capa</span>(<span class="st">"./figuras/elefante_3.jpg"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>1/1 - 0s - 211ms/step</code></pre>
+<pre><code>1/1 - 0s - 214ms/step</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>features_3 <span class="ot">&lt;-</span> <span class="fu">calcular_capa</span>(<span class="st">"./figuras/leon_1.jpg"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1729,7 +1730,7 @@ _ss_  0.04169529</code></pre>
 <span id="cb150-4"><a href="#cb150-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>── R CMD build ─────────────────────────────────────────────────────────────────
-* checking for file ‘/tmp/RtmpUuTRzP/remotesd6fc7867798/bmschmidt-wordVectors-ad127c1/DESCRIPTION’ ... OK
+* checking for file ‘/tmp/RtmpNpHRq8/remotesd6fe6de35e5f/bmschmidt-wordVectors-ad127c1/DESCRIPTION’ ... OK
 * preparing ‘wordVectors’:
 * checking DESCRIPTION meta-information ... OK
 * cleaning src
@@ -1941,7 +1942,7 @@ _ss_  0.04169529</code></pre>
            [,1]       [,2]        [,3]       [,4]        [,5]       [,6]
 [1,] -0.2301596 -0.2543171 -0.04071745 -0.2292878 0.004059255 -0.2283908
 attr(,".cache")
-&lt;environment: 0x5573ffcbceb0&gt;</code></pre>
+&lt;environment: 0x55d5a0affba8&gt;</code></pre>
 </div>
 </div>
 <p>que es un vector en el espacio de representación de palabras. Ahora sumamos este vector a un sustantivo en singular, y vemos qué palabras están cercas de esta “palabra sintética”:</p>
